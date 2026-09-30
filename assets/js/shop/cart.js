@@ -1,6 +1,6 @@
 (function () {
-  const $ = (id) => document.getElementById(id);
-  const { money, esc } = Shop;
+  const { $, esc } = PW;
+  const { money } = Shop;
 
   async function render() {
     $('cart-message').textContent = '';
@@ -9,8 +9,7 @@
       lines = await Shop.lines();
     } catch (err) {
       $('cart-loading').hidden = true;
-      $('cart-error').textContent = err.message;
-      $('cart-error').hidden = false;
+      PW.show($('cart-error'), err.message);
       return;
     }
     $('cart-loading').hidden = true;

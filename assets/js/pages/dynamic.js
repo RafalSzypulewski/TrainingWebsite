@@ -1,11 +1,10 @@
 (function () {
-  const $ = (id) => document.getElementById(id);
+  const { $ } = PW;
 
   // 1. Loading data ----------------------------------------------------------
   async function loadQuotes() {
     const btn = $('load-btn');
-    btn.disabled = true;
-    $('load-spinner').hidden = false;
+    PW.setBusy(true, btn, $('load-spinner'));
     $('load-error').hidden = true;
     $('load-status').textContent = '';
     $('quotes').replaceChildren();
@@ -22,8 +21,7 @@
       $('load-error-text').textContent = err.message;
       $('load-error').hidden = false;
     } finally {
-      btn.disabled = false;
-      $('load-spinner').hidden = true;
+      PW.setBusy(false, btn, $('load-spinner'));
     }
   }
   $('load-btn').addEventListener('click', loadQuotes);
@@ -118,8 +116,7 @@
       $('scroll-count').textContent = `Showing ${shown} of ${items.length}`;
       $('scroll-end').hidden = shown < items.length;
     } catch (err) {
-      $('scroll-error').textContent = err.message;
-      $('scroll-error').hidden = false;
+      PW.show($('scroll-error'), err.message);
       return;
     } finally {
       loading = false;

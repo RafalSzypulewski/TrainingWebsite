@@ -1,5 +1,5 @@
 (function () {
-  const $ = (id) => document.getElementById(id);
+  const { $ } = PW;
 
   function saveBlob(filename, content, type) {
     const blob = new Blob([content], { type });
@@ -20,8 +20,7 @@
   // 1. Generated CSV
   $('csv-btn').addEventListener('click', async (e) => {
     const btn = e.currentTarget;
-    btn.disabled = true;
-    $('csv-spinner').hidden = false;
+    PW.setBusy(true, btn, $('csv-spinner'));
     $('download-status').textContent = 'Preparing employees.csv...';
     $('download-error').hidden = true;
     try {
@@ -30,12 +29,10 @@
       const csv = [cols.join(','), ...rows.map((r) => cols.map((c) => csvCell(r[c])).join(','))].join('\n');
       saveBlob('employees.csv', csv, 'text/csv');
     } catch (err) {
-      $('download-error').textContent = `Export failed: ${err.message}`;
-      $('download-error').hidden = false;
+      PW.show($('download-error'), `Export failed: ${err.message}`);
       $('download-status').textContent = 'No download started.';
     } finally {
-      btn.disabled = false;
-      $('csv-spinner').hidden = true;
+      PW.setBusy(false, btn, $('csv-spinner'));
     }
   });
 

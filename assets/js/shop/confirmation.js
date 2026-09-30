@@ -1,9 +1,8 @@
 (function () {
-  const $ = (id) => document.getElementById(id);
-  const { money, esc } = Shop;
+  const { $, esc } = PW;
+  const { money } = Shop;
 
-  let orders = [];
-  try { orders = JSON.parse(localStorage.getItem('pw_orders') ?? '[]'); } catch { /* treated as no orders */ }
+  const orders = PW.storage.getJSON('pw_orders', []);
   const order = orders.find((o) => o.id === PW.param('order'));
 
   if (!order) {

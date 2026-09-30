@@ -1,5 +1,5 @@
 (function () {
-  const $ = (id) => document.getElementById(id);
+  const { $ } = PW;
   const params = new URLSearchParams(location.search);
   const TIMEOUT = Number(params.get('timeout')) || 3000;
   const POLL = Number(params.get('poll')) || 1000;
@@ -25,8 +25,7 @@
 
   // 1. Users -----------------------------------------------------------------
   $('users-btn').addEventListener('click', async () => {
-    $('users-btn').disabled = true;
-    $('users-spinner').hidden = false;
+    PW.setBusy(true, $('users-btn'), $('users-spinner'));
     $('users-error').hidden = true;
     $('users-empty').hidden = true;
     $('users-list').replaceChildren();
@@ -43,11 +42,9 @@
         }));
       }
     } catch (err) {
-      $('users-error').textContent = `Failed to load users: ${err.message}`;
-      $('users-error').hidden = false;
+      PW.show($('users-error'), `Failed to load users: ${err.message}`);
     } finally {
-      $('users-btn').disabled = false;
-      $('users-spinner').hidden = true;
+      PW.setBusy(false, $('users-btn'), $('users-spinner'));
     }
   });
 

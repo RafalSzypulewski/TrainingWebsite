@@ -1,5 +1,5 @@
 (function () {
-  const $ = (id) => document.getElementById(id);
+  const { $ } = PW;
   const mq = (q) => window.matchMedia(q);
 
   function update() {

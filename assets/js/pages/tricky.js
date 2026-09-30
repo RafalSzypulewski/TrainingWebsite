@@ -1,5 +1,5 @@
 (function () {
-  const $ = (id) => document.getElementById(id);
+  const { $ } = PW;
   const status = (msg) => { $('tricky-status').textContent = msg; };
   const suffix = () => Math.random().toString(36).slice(2, 7);
 

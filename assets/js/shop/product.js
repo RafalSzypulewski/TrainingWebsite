@@ -1,5 +1,5 @@
 (async function () {
-  const $ = (id) => document.getElementById(id);
+  const { $ } = PW;
   const { money } = Shop;
 
   try {
@@ -8,8 +8,7 @@
     const p = products.find((x) => x.id === id);
     $('product-loading').hidden = true;
     if (!p) {
-      $('product-error').textContent = 'Product not found.';
-      $('product-error').hidden = false;
+      PW.show($('product-error'), 'Product not found.');
       return;
     }
 
@@ -46,7 +45,6 @@
     });
   } catch (err) {
     $('product-loading').hidden = true;
-    $('product-error').textContent = err.message;
-    $('product-error').hidden = false;
+    PW.show($('product-error'), err.message);
   }
 })();

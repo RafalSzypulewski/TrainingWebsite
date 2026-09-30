@@ -1,6 +1,6 @@
 (function () {
-  const $ = (id) => document.getElementById(id);
-  const { money, esc } = Shop;
+  const { $, esc } = PW;
+  const { money } = Shop;
   let products = [];
 
   // Initial filters may come from the URL: ?q=book&category=Books
@@ -55,8 +55,8 @@
     if (!btn) return;
     const product = products.find((p) => p.id === Number(btn.dataset.add));
     const res = Shop.cart.add(product);
-    if (res.ok) Shop.toast(`Added ${product.name} to cart`);
-    else Shop.toast(`Only ${res.stock} of ${product.name} in stock`, 'error');
+    if (res.ok) PW.toast(`Added ${product.name} to cart`);
+    else PW.toast(`Only ${res.stock} of ${product.name} in stock`, { kind: 'error' });
   });
 
   async function init() {

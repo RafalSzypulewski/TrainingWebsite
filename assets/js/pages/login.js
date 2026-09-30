@@ -1,10 +1,8 @@
 (function () {
-  const $ = (id) => document.getElementById(id);
+  const { $ } = PW;
   const form = $('login-form');
   const spinner = form.querySelector('[data-testid="login-spinner"]');
   const submit = form.querySelector('[type="submit"]');
-
-  const show = (el, msg) => { el.textContent = msg; el.hidden = !msg; };
 
   // Redirect target: only same-folder .html pages are allowed.
   const requested = PW.param('redirect', '');
@@ -16,8 +14,8 @@
   }
 
   const reason = PW.param('reason');
-  if (reason === 'auth') show($('login-notice'), 'Please log in to view that page.');
-  if (reason === 'logout') show($('login-notice'), 'You have been logged out.');
+  if (reason === 'auth') PW.show($('login-notice'), 'Please log in to view that page.');
+  if (reason === 'logout') PW.show($('login-notice'), 'You have been logged out.');
 
   $('toggle-password').addEventListener('click', (e) => {
     const input = $('password');
@@ -32,15 +30,12 @@
     const username = $('username').value.trim();
     const password = $('password').value;
 
-    show($('username-error'), username ? '' : 'Username is required');
-    show($('password-error'), password ? '' : 'Password is required');
-    show($('login-error'), '');
-    $('username').setAttribute('aria-invalid', String(!username));
-    $('password').setAttribute('aria-invalid', String(!password));
+    PW.fieldError('username', username ? '' : 'Username is required');
+    PW.fieldError('password', password ? '' : 'Password is required');
+    PW.show($('login-error'), '');
     if (!username || !password) return;
 
-    submit.disabled = true;
-    spinner.hidden = false;
+    PW.setBusy(true, submit, spinner);
     try {
       const users = await PW.fetchJSON('assets/data/login-users.json', { defaultDelay: 500 });
       const user = users.find((u) => u.username === username && u.password === password);
@@ -49,9 +44,8 @@
       PW.session.set(user, $('remember').checked);
       location.href = target;
     } catch (err) {
-      show($('login-error'), err.message);
-      submit.disabled = false;
-      spinner.hidden = true;
+      PW.show($('login-error'), err.message);
+      PW.setBusy(false, submit, spinner);
     }
   });
 })();

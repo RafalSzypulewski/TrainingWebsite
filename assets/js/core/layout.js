@@ -1,89 +1,10 @@
 /*
- * Shared layout + fake-backend helpers.
- * Include on every page:  <script src="../assets/js/core/layout.js" defer></script>
- * (use "assets/js/core/layout.js" on index.html). Site root is derived from this script's URL,
- * so the site works from any sub-path (e.g. https://user.github.io/repo-name/).
- *
- * Query-param toggles (work on every page):
- *   ?delay=2000   simulated latency in ms for fake requests
- *   ?fail=true    fake requests fail with a server error
+ * Page shell: header with grouped navigation, the "active toggles" bar, and a footer with the
+ * test-toggle panel, the site version and the Reset data button.
+ * Needs core/pw.js to be loaded first (see the script tags in any page).
  */
 (function () {
-  const root = new URL('../../../', document.currentScript.src);
-  const params = new URLSearchParams(location.search);
-  const SESSION_KEY = 'pw_session';
-  const COOKIE = 'pw_session';
-
-  const PW = (window.PW = {
-    root: root.href,
-    url: (path) => new URL(path, root).href,
-    param: (name, fallback = null) => (params.has(name) ? params.get(name) : fallback),
-    wait: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
-
-    /** Simulated latency: ?delay=N wins, otherwise the page-specific default. */
-    delay(defaultMs = 0) {
-      const n = Number(params.get('delay'));
-      return params.has('delay') && Number.isFinite(n) && n >= 0 ? n : defaultMs;
-    },
-    shouldFail: () => params.get('fail') === 'true',
-
-    /** Fake request: waits, optionally fails (unless respectFail is false), otherwise loads static JSON. */
-    async fetchJSON(path, { defaultDelay = 0, respectFail = true } = {}) {
-      await PW.wait(PW.delay(defaultDelay));
-      if (respectFail && PW.shouldFail()) throw new Error('Server error (500)');
-      const res = await fetch(PW.url(path));
-      if (!res.ok) throw new Error(`Request failed (${res.status})`);
-      return res.json();
-    },
-
-    session: {
-      get() {
-        try {
-          const raw = sessionStorage.getItem(SESSION_KEY) ?? localStorage.getItem(SESSION_KEY);
-          return raw ? JSON.parse(raw) : null;
-        } catch {
-          return null;
-        }
-      },
-      set(user, remember) {
-        const store = remember ? localStorage : sessionStorage;
-        store.setItem(SESSION_KEY, JSON.stringify({ username: user.username, role: user.role, storage: remember ? 'localStorage' : 'sessionStorage', loginAt: Date.now() }));
-        const maxAge = remember ? '; max-age=604800' : '';
-        document.cookie = `${COOKIE}=${encodeURIComponent(user.username)}; path=${root.pathname}; SameSite=Lax${maxAge}`;
-      },
-      clear() {
-        sessionStorage.removeItem(SESSION_KEY);
-        localStorage.removeItem(SESSION_KEY);
-        document.cookie = `${COOKIE}=; path=${root.pathname}; max-age=0`;
-      },
-    },
-
-    /** Call on protected pages: redirects to login (remembering where we came from). */
-    requireAuth() {
-      const s = PW.session.get();
-      if (s) return s;
-      const page = location.pathname.split('/').pop();
-      location.replace(`${PW.url('pages/login.html')}?reason=auth&redirect=${encodeURIComponent(page)}`);
-      return null;
-    },
-
-    logout() {
-      PW.session.clear();
-      location.href = `${PW.url('pages/login.html')}?reason=logout`;
-    },
-
-    /** Clears every bit of state this site may have stored. */
-    resetData() {
-      localStorage.clear();
-      sessionStorage.clear();
-      document.cookie.split(';').forEach((c) => {
-        const name = c.split('=')[0].trim();
-        if (!name) return;
-        for (const path of [root.pathname, '/']) document.cookie = `${name}=; path=${path}; max-age=0`;
-      });
-      location.reload();
-    },
-  });
+  const TOGGLES = ['delay', 'fail'];
 
   // Top-level entries are either a link [path, label] or a dropdown group [label, [links]].
   const NAV = [
@@ -110,39 +31,65 @@
     ]],
   ];
 
-  function render() {
+  /** "delay=500", "fail=true", ... for the toggles present in the URL. */
+  const activeToggles = () => TOGGLES.filter((name) => PW.param(name) !== null).map((name) => `${name}=${PW.param(name)}`);
+
+  function navHtml() {
     const current = location.pathname.replace(/\/$/, '/index.html');
     const isCurrent = (path) => current.endsWith('/' + path);
     const link = ([path, label]) => `<li><a href="${PW.url(path)}"${isCurrent(path) ? ' aria-current="page"' : ''}>${label}</a></li>`;
-    const links = NAV.map((entry) => {
+    return NAV.map((entry) => {
       if (typeof entry[1] === 'string') return link(entry);
       const [label, items] = entry;
       const active = items.some(([path]) => isCurrent(path)) ? ' data-active="true"' : '';
       return `<li class="nav-group"><button type="button" class="nav-toggle" aria-expanded="false" aria-haspopup="true"${active}>${label}</button><ul class="nav-menu">${items.map(link).join('')}</ul></li>`;
     }).join('');
-    const s = PW.session.get();
-    const auth = s ? `<span class="nav-auth" data-testid="nav-user">Signed in as ${s.username}</span>` : '';
+  }
 
+  function buildHeader() {
+    const session = PW.session.get();
+    const auth = session ? `<span class="nav-auth" data-testid="nav-user">Signed in as ${PW.esc(session.username)}</span>` : '';
     const header = document.createElement('header');
     header.className = 'site-header';
     header.innerHTML = `
       <a class="skip-link" href="#main">Skip to content</a>
       <div class="container bar">
         <a class="brand" href="${PW.url('index.html')}" data-testid="brand">PW Practice Lab</a>
-        <nav aria-label="Main"><ul>${links}</ul></nav>
+        <nav aria-label="Main"><ul>${navHtml()}</ul></nav>
         ${auth}
       </div>`;
     document.body.prepend(header);
+    return header;
+  }
 
-    const toggles = ['delay', 'fail'].filter((k) => params.has(k)).map((k) => `${k}=${params.get(k)}`);
-    if (toggles.length) {
-      const bar = document.createElement('div');
-      bar.className = 'toggle-bar';
-      bar.dataset.testid = 'active-toggles';
-      bar.innerHTML = `<div class="container">Active toggles: <strong>${toggles.join(', ')}</strong></div>`;
-      header.after(bar);
-    }
+  /** Dropdown groups: click toggles, Escape / outside click closes (hover also opens them via CSS). */
+  function wireNavGroups(header) {
+    const groups = [...header.querySelectorAll('.nav-group')];
+    const closeAll = (except) => groups.forEach((g) => {
+      if (g !== except) {
+        g.classList.remove('open');
+        g.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false');
+      }
+    });
+    groups.forEach((g) => g.querySelector('.nav-toggle').addEventListener('click', (e) => {
+      closeAll(g);
+      const open = g.classList.toggle('open');
+      e.currentTarget.setAttribute('aria-expanded', String(open));
+    }));
+    document.addEventListener('click', (e) => { if (!e.target.closest('.nav-group')) closeAll(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
+  }
 
+  function buildToggleBar(header, active) {
+    if (!active.length) return;
+    const bar = document.createElement('div');
+    bar.className = 'toggle-bar';
+    bar.dataset.testid = 'active-toggles';
+    bar.innerHTML = `<div class="container">Active toggles: <strong>${active.join(', ')}</strong></div>`;
+    header.after(bar);
+  }
+
+  function buildFooter(active) {
     const footer = document.createElement('footer');
     footer.className = 'site-footer';
     footer.innerHTML = `
@@ -150,7 +97,7 @@
         <p>Practice site for test automation. All data is fake and stored in your browser only.<br>
           <span class="version" data-testid="site-version" hidden></span></p>
         <div class="footer-actions">
-          <details class="toggle-panel" data-testid="toggle-panel"${toggles.length ? ' open' : ''}>
+          <details class="toggle-panel" data-testid="toggle-panel"${active.length ? ' open' : ''}>
             <summary>Test toggles</summary>
             <form class="toggle-form" novalidate>
               <label>Delay (ms) <input type="number" min="0" step="100" inputmode="numeric" data-testid="toggle-delay"></label>
@@ -165,26 +112,29 @@
       </div>`;
     document.body.append(footer);
     footer.querySelector('[data-testid="reset-data"]').addEventListener('click', PW.resetData);
+    return footer;
+  }
 
-    // Toggle panel: edits ?delay and ?fail in the URL (other query parameters are kept) and reloads.
-    const toggleForm = footer.querySelector('.toggle-form');
-    const delayInput = toggleForm.querySelector('[data-testid="toggle-delay"]');
-    const failInput = toggleForm.querySelector('[data-testid="toggle-fail"]');
-    const toggleError = toggleForm.querySelector('[data-testid="toggle-error"]');
-    delayInput.value = params.get('delay') ?? '';
-    failInput.checked = params.get('fail') === 'true';
+  /** Toggle panel: edits ?delay and ?fail in the URL (other query parameters are kept) and reloads. */
+  function wireToggleForm(footer) {
+    const form = footer.querySelector('.toggle-form');
+    const delayInput = form.querySelector('[data-testid="toggle-delay"]');
+    const failInput = form.querySelector('[data-testid="toggle-fail"]');
+    const error = form.querySelector('[data-testid="toggle-error"]');
+    delayInput.value = PW.param('delay', '');
+    failInput.checked = PW.param('fail') === 'true';
+
     const navigateWith = (change) => {
       const url = new URL(location.href);
       change(url.searchParams);
       location.href = url.href;
     };
-    toggleForm.addEventListener('submit', (e) => {
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
       const raw = delayInput.value.trim();
       const delay = Number(raw);
       if (raw !== '' && !(Number.isInteger(delay) && delay >= 0)) {
-        toggleError.textContent = 'Delay must be a whole number of milliseconds (0 or more).';
-        toggleError.hidden = false;
+        PW.show(error, 'Delay must be a whole number of milliseconds (0 or more).');
         delayInput.setAttribute('aria-invalid', 'true');
         return;
       }
@@ -193,32 +143,30 @@
         if (failInput.checked) q.set('fail', 'true'); else q.delete('fail');
       });
     });
-    toggleForm.querySelector('[data-testid="toggle-clear"]').addEventListener('click', () => {
-      navigateWith((q) => { q.delete('delay'); q.delete('fail'); });
+    form.querySelector('[data-testid="toggle-clear"]').addEventListener('click', () => {
+      navigateWith((q) => TOGGLES.forEach((name) => q.delete(name)));
     });
+  }
 
-    // Version comes from assets/data/version.json; the deploy workflow adds the commit and build date.
+  /** The version comes from assets/data/version.json; the deploy workflow adds the commit and build date. */
+  function showVersion(footer) {
     fetch(PW.url('assets/data/version.json'), { cache: 'no-cache' })
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error('no version info'))))
       .then((info) => {
         const el = footer.querySelector('[data-testid="site-version"]');
-        el.textContent = ['v' + info.version, info.commit, info.built && 'built ' + info.built].filter(Boolean).join(' \u00b7 ');
-        el.hidden = false;
+        PW.show(el, ['v' + info.version, info.commit, info.built && 'built ' + info.built].filter(Boolean).join(' · '));
       })
       .catch(() => {}); // version info is optional
+  }
 
-    // Dropdown groups: click toggles, Escape / outside click closes (hover and focus also open via CSS).
-    const groups = [...header.querySelectorAll('.nav-group')];
-    const closeAll = (except) => groups.forEach((g) => {
-      if (g !== except) { g.classList.remove('open'); g.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false'); }
-    });
-    groups.forEach((g) => g.querySelector('.nav-toggle').addEventListener('click', (e) => {
-      closeAll(g);
-      const open = g.classList.toggle('open');
-      e.currentTarget.setAttribute('aria-expanded', String(open));
-    }));
-    document.addEventListener('click', (e) => { if (!e.target.closest('.nav-group')) closeAll(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
+  function render() {
+    const active = activeToggles();
+    const header = buildHeader();
+    wireNavGroups(header);
+    buildToggleBar(header, active);
+    const footer = buildFooter(active);
+    wireToggleForm(footer);
+    showVersion(footer);
 
     const main = document.querySelector('main');
     if (main && !main.id) main.id = 'main';

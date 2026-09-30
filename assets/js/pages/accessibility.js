@@ -1,13 +1,12 @@
 (function () {
-  const $ = (id) => document.getElementById(id);
-  const validEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  const { $ } = PW;
 
   // ---- GOOD ----------------------------------------------------------------
   $('good-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const input = $('good-email');
     const value = input.value.trim();
-    const error = !value ? 'Email is required' : !validEmail(value) ? 'Enter a valid email address' : '';
+    const error = !value ? 'Email is required' : !PW.isEmail(value) ? 'Enter a valid email address' : '';
     $('good-email-error').textContent = error;
     input.setAttribute('aria-invalid', String(!!error));
     $('good-status').textContent = error ? '' : `Subscribed ${value}`;
@@ -43,8 +42,8 @@
   // ---- BAD (mouse only, no semantics) -------------------------------------
   $('bad-submit').addEventListener('click', () => {
     const value = $('bad-email').value.trim();
-    $('bad-email-error').textContent = validEmail(value) ? '' : ' invalid!';
-    $('bad-status').textContent = validEmail(value) ? `Subscribed ${value}` : '';
+    $('bad-email-error').textContent = PW.isEmail(value) ? '' : ' invalid!';
+    $('bad-status').textContent = PW.isEmail(value) ? `Subscribed ${value}` : '';
   });
   $('bad-acc-btn').addEventListener('click', () => {
     const panel = $('bad-acc-panel');

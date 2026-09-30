@@ -1,7 +1,6 @@
 (function () {
-  const $ = (id) => document.getElementById(id);
+  const { $, esc } = PW;
   const KEY = 'pw_tables';
-  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const money = (n) => `$${n.toLocaleString('en-US')}`;
 
   let all = [];
@@ -12,10 +11,8 @@
   const selected = new Set();
 
   // Changes (deletes / edits / status toggles) persist in localStorage on top of the JSON.
-  const loadChanges = () => {
-    try { return JSON.parse(localStorage.getItem(KEY)) ?? { deleted: [], edits: {} }; } catch { return { deleted: [], edits: {} }; }
-  };
-  const saveChanges = (c) => localStorage.setItem(KEY, JSON.stringify(c));
+  const loadChanges = () => PW.storage.getJSON(KEY, { deleted: [], edits: {} });
+  const saveChanges = (changes) => PW.storage.setJSON(KEY, changes);
   function mutate(fn) {
     const c = loadChanges();
     fn(c);
@@ -179,8 +176,7 @@
       $('department').append(...depts.map((d) => new Option(d, d)));
       render();
     } catch (err) {
-      $('table-error').textContent = err.message;
-      $('table-error').hidden = false;
+      PW.show($('table-error'), err.message);
       $('rows').innerHTML = '';
       $('range-info').textContent = 'Failed to load employees.';
     }

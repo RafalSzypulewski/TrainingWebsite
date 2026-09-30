@@ -1,13 +1,10 @@
 /*
- * Shared shop logic: cart in localStorage, promo codes, totals, header cart link, toasts.
- * All money is handled in integer cents. Load after core/layout.js.
+ * Shared shop logic: cart in localStorage, promo codes, totals, header cart link.
+ * All money is handled in integer cents. Load after core/pw.js and core/layout.js.
  */
 (function () {
   const CART = 'pw_cart';
   const PROMO = 'pw_promo';
-  const read = (key, fallback) => {
-    try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
-  };
 
   const PROMOS = {
     SAVE10: { code: 'SAVE10', label: '10% off your order', percent: 10 },
@@ -22,7 +19,6 @@
   const Shop = (window.Shop = {
     PROMOS,
     money: (cents) => `$${(cents / 100).toFixed(2)}`,
-    esc: (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])),
 
     /** Products from static JSON (cached; a failed load can be retried). */
     products({ respectFail = true } = {}) {
@@ -34,8 +30,8 @@
     },
 
     cart: {
-      get: () => read(CART, []),
-      set(items) { localStorage.setItem(CART, JSON.stringify(items)); Shop.updateBadge(); },
+      get: () => PW.storage.getJSON(CART, []),
+      set(items) { PW.storage.setJSON(CART, items); Shop.updateBadge(); },
       count: () => Shop.cart.get().reduce((n, i) => n + i.qty, 0),
       /** Adds qty of a product, respecting stock. Returns { ok, stock }. */
       add(product, qty = 1) {
@@ -88,20 +84,6 @@
     updateBadge() {
       const link = document.querySelector('[data-testid="cart-link"]');
       if (link) link.querySelector('[data-testid="cart-count"]').textContent = Shop.cart.count();
-    },
-
-    toast(message, kind = 'success') {
-      let region = document.getElementById('toast-region');
-      if (!region) {
-        region = Object.assign(document.createElement('div'), { id: 'toast-region', className: 'toast-region' });
-        region.setAttribute('role', 'status');
-        region.setAttribute('aria-live', 'polite');
-        document.body.append(region);
-      }
-      const el = Object.assign(document.createElement('div'), { className: `toast ${kind}`, textContent: message });
-      el.dataset.testid = 'toast';
-      region.append(el);
-      setTimeout(() => el.remove(), PW.delay(2500));
     },
   });
 

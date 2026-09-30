@@ -1,13 +1,13 @@
 (function () {
-  const form = document.getElementById('signup-form');
-  const $ = (id) => document.getElementById(id);
+  const { $ } = PW;
+  const form = $('signup-form');
   const today = new Date().toISOString().slice(0, 10);
   const ext = (f) => f.name.split('.').pop().toLowerCase();
 
   // Each rule returns an error message, or '' when valid.
   const rules = {
     fullName: (v) => (!v.trim() ? 'Full name is required' : v.trim().length < 2 ? 'Full name must be at least 2 characters' : ''),
-    email: (v) => (!v ? 'Email is required' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? 'Enter a valid email address' : ''),
+    email: (v) => (!v ? 'Email is required' : !PW.isEmail(v) ? 'Enter a valid email address' : ''),
     password: (v) => (!v ? 'Password is required' : v.length < 8 || !/\d/.test(v) ? 'Password must be at least 8 characters and include a number' : ''),
     confirmPassword: (v) => (v !== read('password') ? 'Passwords do not match' : ''),
     age: (v) => (v === '' ? 'Age is required' : +v < 18 || +v > 99 ? 'Age must be between 18 and 99' : ''),
@@ -38,18 +38,12 @@
   }
 
   function validateField(name) {
-    const msg = rules[name](read(name));
-    const err = $(`${name}-error`);
-    err.textContent = msg;
-    err.hidden = !msg;
-    const input = $(name);
-    if (input && /^(INPUT|SELECT|TEXTAREA)$/.test(input.tagName)) input.setAttribute('aria-invalid', String(!!msg));
-    return msg;
+    return PW.fieldError(name, rules[name](read(name)));
   }
 
   function clearAll() {
     Object.keys(rules).forEach((name) => {
-      $(`${name}-error`).hidden = true;
+      PW.show($(`${name}-error`), '');
       $(name)?.removeAttribute('aria-invalid');
     });
     $('form-summary').hidden = true;
@@ -87,15 +81,12 @@
     $('result').hidden = true;
 
     const errors = Object.keys(rules).map(validateField).filter(Boolean);
-    const summary = $('form-summary');
-    summary.hidden = errors.length === 0;
-    summary.textContent = `Please fix ${errors.length} error${errors.length === 1 ? '' : 's'} before submitting.`;
+    PW.errorSummary($('form-summary'), errors.length, 'submitting');
     if (errors.length) return;
 
     const submit = form.querySelector('[type="submit"]');
     const spinner = form.querySelector('[data-testid="form-spinner"]');
-    submit.disabled = true;
-    spinner.hidden = false;
+    PW.setBusy(true, submit, spinner);
     try {
       await PW.wait(PW.delay(300));
       if (PW.shouldFail()) throw new Error('Server error (500): could not save your registration.');
@@ -109,17 +100,14 @@
       data.password = '********';
       delete data.confirmPassword;
       data.terms = true;
-      localStorage.setItem('pw_forms_last', JSON.stringify(data));
+      PW.storage.setJSON('pw_forms_last', data);
 
       $('result-json').textContent = JSON.stringify(data, null, 2);
       $('result').hidden = false;
     } catch (err) {
-      const box = $('form-server-error');
-      box.textContent = err.message;
-      box.hidden = false;
+      PW.show($('form-server-error'), err.message);
     } finally {
-      submit.disabled = false;
-      spinner.hidden = true;
+      PW.setBusy(false, submit, spinner);
     }
   });
 

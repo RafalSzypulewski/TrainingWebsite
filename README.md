@@ -6,6 +6,42 @@ A static, backend-free website for practicing test automation with Playwright.
 Plain HTML/CSS/vanilla JS, no build step. State lives in `localStorage`, `sessionStorage`
 and cookies; "server" data is static JSON in `assets/data/` loaded via `fetch()`.
 
+## Project structure
+
+```text
+index.html                  home page
+pages/                      one HTML file per page (+ popup.html and frames/, used by Windows & frames)
+assets/
+  css/styles.css            the only stylesheet
+  js/core/                  loaded on EVERY page, in this order: pw.js (shared helpers), layout.js (nav, footer)
+  js/pages/                 one script per page, named like the page: login.html -> pages/login.js
+  js/shop/                  the mini shop: store.js (cart, promos, totals) plus one script per shop page
+  data/                     static JSON that plays the backend; data/api/ holds the Network page fixtures
+  img/, downloads/          images and the downloadable sample file
+tests/
+  core/ intermediate/ flow/ advanced/   specs grouped like the navigation menu
+  site/                     cross-cutting specs: navigation, toggles, version, link crawl, PW helpers
+  support/                  fixtures.ts (console-error guard), helpers.ts, crawler.ts, pw-globals.d.ts
+  playwright.config.ts, tsconfig.json
+.github/workflows/          tests.yml (PRs), pages.yml (deploy + smoke), nightly.yml (live site)
+```
+
+Conventions:
+
+- A page `pages/foo.html` gets `assets/js/pages/foo.js` and `tests/<group>/foo.spec.ts`.
+- Data files are kebab-case and named for what they hold (`login-users.json`, `scroll-items.json`).
+- Shared behaviour goes into `core/pw.js` (the global `PW`), never copied into a page script. It provides
+  `# PW Practice Lab
+
+**Live site: https://rafalszypulewski.github.io/TrainingWebsite/**
+
+A static, backend-free website for practicing test automation with Playwright.
+Plain HTML/CSS/vanilla JS, no build step. State lives in `localStorage`, `sessionStorage`
+and cookies; "server" data is static JSON in `assets/data/` loaded via `fetch()`.
+
+, `esc`, `isEmail`, `show`, `fieldError`, `errorSummary`, `setBusy`, `toast`, `storage`, `cookie`, `session` and
+  the fake-network helpers (`delay`, `fetchJSON`). Page scripts start with `const { $ } = PW;`.
+
 ## Versioning
 
 The site version lives in `assets/data/version.json` (keep it in sync with `package.json`). The footer of every

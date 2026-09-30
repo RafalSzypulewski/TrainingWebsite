@@ -1,5 +1,5 @@
 (function () {
-  const $ = (id) => document.getElementById(id);
+  const { $ } = PW;
 
   // 1. Hover -----------------------------------------------------------------
   const hoverTarget = $('hover-target');

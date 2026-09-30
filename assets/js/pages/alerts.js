@@ -1,5 +1,5 @@
 (function () {
-  const $ = (id) => document.getElementById(id);
+  const { $ } = PW;
   const result = (msg) => { $('dialog-result').textContent = msg; };
 
   // 1. Native dialogs --------------------------------------------------------
@@ -29,29 +29,18 @@
   });
 
   // 3. Toasts ----------------------------------------------------------------
-  function toast(kind, text) {
-    const el = document.createElement('div');
-    el.className = `toast ${kind}`;
-    el.dataset.testid = 'toast';
-    el.innerHTML = '<span></span><button type="button" aria-label="Dismiss notification">&times;</button>';
-    el.firstChild.textContent = text;
-    el.querySelector('button').addEventListener('click', () => el.remove());
-    $('toast-region').append(el);
-    setTimeout(() => el.remove(), PW.delay(3000));
-  }
-  $('toast-success').addEventListener('click', () => toast('success', 'Saved successfully'));
-  $('toast-error').addEventListener('click', () => toast('error', 'Something went wrong'));
+  $('toast-success').addEventListener('click', () => PW.toast('Saved successfully', { dismissible: true }));
+  $('toast-error').addEventListener('click', () => PW.toast('Something went wrong', { kind: 'error', dismissible: true }));
 
   // 4. Cookie banner ---------------------------------------------------------
   const COOKIE = 'pw_cookie_consent';
-  const readConsent = () => document.cookie.split('; ').find((c) => c.startsWith(`${COOKIE}=`))?.split('=')[1] ?? null;
   function showConsent() {
-    const value = readConsent();
+    const value = PW.cookie.get(COOKIE);
     $('consent-status').textContent = value ?? 'not chosen';
     $('cookie-banner').hidden = value !== null;
   }
   function choose(value) {
-    document.cookie = `${COOKIE}=${value}; path=${new URL(PW.root).pathname}; max-age=31536000; SameSite=Lax`;
+    PW.cookie.set(COOKIE, value, { maxAge: 31536000 });
     showConsent();
   }
   $('cookie-accept').addEventListener('click', () => choose('accepted'));
