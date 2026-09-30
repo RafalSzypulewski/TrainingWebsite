@@ -5,7 +5,7 @@ test.describe('Windows and frames', () => {
     await page.goto('pages/windows.html');
   });
 
-  test('link opens a new tab', async ({ page }) => {
+  test('link opens a new tab', { tag: '@smoke' }, async ({ page }) => {
     const popupPromise = page.waitForEvent('popup');
     await page.getByTestId('new-tab-link').click();
     const popup = await popupPromise;

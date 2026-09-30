@@ -1,22 +1,32 @@
 import { test, expect } from './fixtures';
+import type { Page } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
 
 const root = path.resolve(__dirname, '..');
 const readJSON = (file: string) => JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
 
+async function expectVersionFooter(page: Page, url: string) {
+  await page.goto(url);
+  const version = page.getByRole('contentinfo').getByTestId('site-version');
+  await expect(version).toBeVisible();
+  // "v1.0.0" locally; the deployed site appends " · <commit> · built <date>".
+  const current = String(readJSON('package.json').version).replace(/\./g, '\\.');
+  await expect(version).toHaveText(new RegExp(`^v${current}( · [0-9a-f]{7} · built \\d{4}-\\d{2}-\\d{2})?$`));
+}
+
 test.describe('Site version', () => {
   test('version.json and package.json agree', () => {
     expect(readJSON('assets/data/version.json').version).toBe(readJSON('package.json').version);
   });
 
-  for (const page of ['index.html', 'pages/login.html', 'pages/shop.html', 'pages/tricky.html']) {
-    test(`footer shows the version on ${page}`, async ({ page: p }) => {
-      await p.goto(page);
-      const version = p.getByRole('contentinfo').getByTestId('site-version');
-      await expect(version).toBeVisible();
-      // "v1.0.0" locally; the deployed site appends " · <commit> · built <date>".
-      await expect(version).toHaveText(new RegExp(`^v${readJSON('package.json').version.replace(/\./g, '\\.')}( · [0-9a-f]{7} · built \\d{4}-\\d{2}-\\d{2})?$`));
+  test('footer shows the version on the home page', { tag: '@smoke' }, async ({ page }) => {
+    await expectVersionFooter(page, 'index.html');
+  });
+
+  for (const url of ['pages/login.html', 'pages/shop.html', 'pages/tricky.html']) {
+    test(`footer shows the version on ${url}`, async ({ page }) => {
+      await expectVersionFooter(page, url);
     });
   }
 

@@ -2,7 +2,7 @@ import { test, expect } from './fixtures';
 import { USERS, login } from './helpers';
 
 test.describe('Login', () => {
-  test('valid credentials land on the dashboard', async ({ page }) => {
+  test('valid credentials land on the dashboard', { tag: '@smoke' }, async ({ page }) => {
     await login(page);
     await expect(page.getByTestId('welcome')).toHaveText('Welcome, student!');
     await expect(page.getByTestId('dashboard-role')).toHaveText('user');

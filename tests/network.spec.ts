@@ -21,7 +21,7 @@ test.describe('Network: users list', () => {
     await expect(page.getByTestId('user').first()).toHaveText('Ada Lovelace <ada@example.com>');
   });
 
-  test('mocked data replaces the real response', async ({ page }) => {
+  test('mocked data replaces the real response', { tag: '@smoke' }, async ({ page }) => {
     await page.route(USERS, (route) => json(route, [{ id: 9, name: 'Mock Person', email: 'mock@test.dev' }]));
     await page.getByTestId('users-btn').click();
     await expect(page.getByTestId('user')).toHaveText(['Mock Person <mock@test.dev>']);

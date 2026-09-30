@@ -48,7 +48,7 @@ test.describe('Registration form', () => {
     await expect(page.getByTestId('result-panel')).toBeHidden();
   });
 
-  test('valid submission shows the collected data', async ({ page }) => {
+  test('valid submission shows the collected data', { tag: '@smoke' }, async ({ page }) => {
     await fillValid(page);
     await page.getByTestId('submit').click();
 

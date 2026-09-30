@@ -14,7 +14,7 @@ test.describe('Tables', () => {
     await expect(rows(page)).toHaveCount(10);
   });
 
-  test('first page shows 10 of 45 rows', async ({ page }) => {
+  test('first page shows 10 of 45 rows', { tag: '@smoke' }, async ({ page }) => {
     await expect(page.getByTestId('range-info')).toHaveText('Showing 1-10 of 45');
     await expect(page.getByTestId('page-prev')).toBeDisabled();
     await expect(page.getByRole('button', { name: '1', exact: true })).toHaveAttribute('aria-current', 'page');
