@@ -85,25 +85,40 @@
     },
   });
 
+  // Top-level entries are either a link [path, label] or a dropdown group [label, [links]].
   const NAV = [
     ['index.html', 'Home'],
-    ['pages/login.html', 'Login'],
-    ['pages/dashboard.html', 'Dashboard'],
-    ['pages/forms.html', 'Forms'],
-    ['pages/dynamic.html', 'Dynamic'],
-    ['pages/tables.html', 'Tables'],
-    ['pages/alerts.html', 'Alerts'],
-    ['pages/windows.html', 'Windows'],
-    ['pages/mouse.html', 'Mouse'],
-    ['pages/downloads.html', 'Downloads'],
+    ['Core', [
+      ['pages/login.html', 'Login'],
+      ['pages/dashboard.html', 'Dashboard'],
+      ['pages/forms.html', 'Forms'],
+      ['pages/dynamic.html', 'Dynamic content'],
+      ['pages/tables.html', 'Tables'],
+    ]],
+    ['Intermediate', [
+      ['pages/alerts.html', 'Alerts &amp; dialogs'],
+      ['pages/windows.html', 'Windows &amp; frames'],
+      ['pages/mouse.html', 'Mouse &amp; keyboard'],
+      ['pages/downloads.html', 'Downloads'],
+    ]],
     ['pages/shop.html', 'Shop'],
+    ['Advanced', [
+      ['pages/network.html', 'Network'],
+      ['pages/accessibility.html', 'Accessibility'],
+      ['pages/responsive.html', 'Responsive'],
+      ['pages/tricky.html', 'Tricky'],
+    ]],
   ];
 
   function render() {
     const current = location.pathname.replace(/\/$/, '/index.html');
-    const links = NAV.map(([path, label]) => {
-      const active = current.endsWith('/' + path) ? ' aria-current="page"' : '';
-      return `<li><a href="${PW.url(path)}"${active}>${label}</a></li>`;
+    const isCurrent = (path) => current.endsWith('/' + path);
+    const link = ([path, label]) => `<li><a href="${PW.url(path)}"${isCurrent(path) ? ' aria-current="page"' : ''}>${label}</a></li>`;
+    const links = NAV.map((entry) => {
+      if (typeof entry[1] === 'string') return link(entry);
+      const [label, items] = entry;
+      const active = items.some(([path]) => isCurrent(path)) ? ' data-active="true"' : '';
+      return `<li class="nav-group"><button type="button" class="nav-toggle" aria-expanded="false" aria-haspopup="true"${active}>${label}</button><ul class="nav-menu">${items.map(link).join('')}</ul></li>`;
     }).join('');
     const s = PW.session.get();
     const auth = s ? `<span class="nav-auth" data-testid="nav-user">Signed in as ${s.username}</span>` : '';
@@ -137,6 +152,19 @@
       </div>`;
     document.body.append(footer);
     footer.querySelector('button').addEventListener('click', PW.resetData);
+
+    // Dropdown groups: click toggles, Escape / outside click closes (hover and focus also open via CSS).
+    const groups = [...header.querySelectorAll('.nav-group')];
+    const closeAll = (except) => groups.forEach((g) => {
+      if (g !== except) { g.classList.remove('open'); g.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false'); }
+    });
+    groups.forEach((g) => g.querySelector('.nav-toggle').addEventListener('click', (e) => {
+      closeAll(g);
+      const open = g.classList.toggle('open');
+      e.currentTarget.setAttribute('aria-expanded', String(open));
+    }));
+    document.addEventListener('click', (e) => { if (!e.target.closest('.nav-group')) closeAll(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
 
     const main = document.querySelector('main');
     if (main && !main.id) main.id = 'main';

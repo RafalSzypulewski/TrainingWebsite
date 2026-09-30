@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tricky elements - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/tricky.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div class="stack">
+        <h1>Tricky elements</h1>
+        <p class="banner info" data-testid="tricky-status" id="tricky-status" role="status">Nothing clicked yet.</p>
+
+        <section class="card" aria-labelledby="h-dup">
+          <h2 id="h-dup">1. Duplicate IDs (invalid HTML on purpose)</h2>
+          <div class="actions">
+            <button type="button" id="duplicate" class="btn secondary">First duplicate</button>
+            <button type="button" id="duplicate" class="btn secondary">Second duplicate</button>
+            <button type="button" id="duplicate" class="btn secondary">Third duplicate</button>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="h-dyn">
+          <h2 id="h-dyn">2. Changing classes and ids</h2>
+          <div class="actions">
+            <button type="button" class="btn" id="dynamic-class-btn">Shape-shifting button</button>
+          </div>
+          <div class="field">
+            <label for="dynamic-id-input" id="dynamic-id-label">Input with a random id</label>
+            <input type="text" id="dynamic-id-input">
+          </div>
+          <p class="help">Class names and the input's id change every run &mdash; locate them by role, text or label instead.</p>
+        </section>
+
+        <section class="card" aria-labelledby="h-timing">
+          <h2 id="h-timing">3. Timing: delayed, disabling, covered and moving</h2>
+          <div class="actions">
+            <button type="button" class="btn" id="delayed-enable" data-testid="delayed-enable" disabled>Enabled after a delay</button>
+            <button type="button" class="btn" id="disable-after-click" data-testid="disable-after-click">Click me (disables itself)</button>
+          </div>
+          <div class="cover-wrap">
+            <button type="button" class="btn" id="covered-btn" data-testid="covered-btn">Covered by an overlay</button>
+            <div class="cover" id="cover" data-testid="cover">Loading...</div>
+          </div>
+          <div class="move-track"><button type="button" class="btn moving" id="moving-btn" data-testid="moving-btn">Moving target</button></div>
+          <div class="actions">
+            <button type="button" class="btn" id="random-btn" data-testid="random-btn">Random delay</button>
+            <span class="spinner" id="random-spinner" role="progressbar" aria-label="Working" hidden></span>
+            <span id="random-result" data-testid="random-result" role="status"></span>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="h-rerender">
+          <h2 id="h-rerender">4. Re-rendering list</h2>
+          <p class="help">Every 500 ms the list is rebuilt with brand new DOM nodes.</p>
+          <ul id="rerender-list" class="plain-list" data-testid="rerender-list"></ul>
+        </section>
+
+        <section class="card" aria-labelledby="h-hidden">
+          <h2 id="h-hidden">5. Hidden in different ways</h2>
+          <div class="hidden-variants">
+            <div class="v-none" data-testid="v-display-none">display: none</div>
+            <div class="v-visibility" data-testid="v-visibility">visibility: hidden</div>
+            <div class="v-opacity" data-testid="v-opacity">opacity: 0</div>
+            <div class="v-offscreen" data-testid="v-offscreen">positioned off-screen</div>
+            <div class="v-zero" data-testid="v-zero">zero size</div>
+            <div hidden data-testid="v-hidden-attr">hidden attribute</div>
+            <div class="v-shown" data-testid="v-shown">I am plainly visible</div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="h-same">
+          <h2 id="h-same">6. Same text, many places</h2>
+          <ul class="plain-list" id="delete-list" data-testid="delete-list">
+            <li data-testid="row-apple"><span>Apple</span> <button type="button" class="btn danger small">Delete</button></li>
+            <li data-testid="row-banana"><span>Banana</span> <button type="button" class="btn danger small">Delete</button></li>
+            <li data-testid="row-cherry"><span>Cherry</span> <button type="button" class="btn danger small">Delete</button></li>
+          </ul>
+          <p data-testid="messy-text">   Hello     World
+            from   the   page   </p>
+        </section>
+
+        <section class="card" aria-labelledby="h-state">
+          <h2 id="h-state">7. Disabled, read-only and editable</h2>
+          <div class="actions">
+            <button type="button" class="btn" disabled data-testid="native-disabled">Natively disabled</button>
+            <button type="button" class="btn" aria-disabled="true" data-testid="aria-disabled">aria-disabled</button>
+          </div>
+          <div class="field">
+            <label for="readonly-input">Read-only input</label>
+            <input type="text" id="readonly-input" value="cannot edit me" readonly>
+          </div>
+          <div class="field">
+            <span id="editable-label">Content editable</span>
+            <div class="editable" contenteditable="true" role="textbox" aria-labelledby="editable-label" data-testid="editable"></div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="h-far">
+          <h2 id="h-far">8. Far below the fold</h2>
+          <div class="spacer" aria-hidden="true">&darr; keep scrolling &darr;</div>
+          <button type="button" class="btn" id="far-btn" data-testid="far-btn">I am far away</button>
+        </section>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Click each of the three "duplicate" buttons; why does <code>#duplicate</code> only reach the first?</li>
+          <li>Click the shape-shifting button and fill the random-id input without using a class or id.</li>
+          <li>Click the delayed-enable button the moment it becomes enabled (<code>?delay</code> speeds it up).</li>
+          <li>Click the disable-after-click button twice and assert it becomes disabled, then enabled.</li>
+          <li>Click the covered button and let Playwright wait for the overlay to go away.</li>
+          <li>Click the moving target, and the item in the list that keeps being re-rendered.</li>
+          <li>Assert the visibility of each hidden variant. Which one does Playwright treat as visible?</li>
+          <li>Delete "Banana" without a test id on the button; match the messy text.</li>
+          <li>Check both disabled kinds with <code>toBeDisabled</code>; try to <code>fill</code> the read-only and editable fields.</li>
+          <li>Click the far button and use <code>?seed=1</code> to make the random delay reproducible.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Network - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/network.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div class="stack">
+        <h1>Network</h1>
+        <p class="banner info">This page makes <strong>real <code>fetch()</code> calls</strong> to static files (and one POST that a static host cannot answer).
+          Use <code>page.route()</code> to mock, delay, fail or inspect them. The <code>?delay</code> and <code>?fail</code> toggles are not used here.</p>
+
+        <section class="card" aria-labelledby="h-users">
+          <h2 id="h-users">1. List users <code>GET assets/data/api/users.json</code></h2>
+          <div class="actions">
+            <button type="button" class="btn" id="users-btn" data-testid="users-btn">Load users</button>
+            <span class="spinner" id="users-spinner" role="progressbar" aria-label="Loading users" hidden></span>
+          </div>
+          <p id="users-error" class="banner error" data-testid="users-error" role="alert" hidden></p>
+          <p id="users-empty" data-testid="users-empty" hidden>No users found.</p>
+          <ul id="users-list" data-testid="users-list"></ul>
+          <p class="help">The request carries the header <code>X-Practice-Client: pw-lab</code> and the query <code>?page=1</code>.</p>
+        </section>
+
+        <section class="card" aria-labelledby="h-slow">
+          <h2 id="h-slow">2. Slow request with a timeout <code>GET assets/data/api/slow.json</code></h2>
+          <p class="help">Gives up after <span id="timeout-ms" data-testid="timeout-ms">3000</span> ms (change it with <code>?timeout=500</code>).</p>
+          <div class="actions">
+            <button type="button" class="btn" id="slow-btn" data-testid="slow-btn">Load slow data</button>
+          </div>
+          <p id="slow-status" data-testid="slow-status" role="status"></p>
+        </section>
+
+        <section class="card" aria-labelledby="h-retry">
+          <h2 id="h-retry">3. Retry on failure <code>GET assets/data/api/flaky.json</code></h2>
+          <p class="help">Makes up to 3 attempts, 300 ms apart.</p>
+          <div class="actions">
+            <button type="button" class="btn" id="retry-btn" data-testid="retry-btn">Load flaky data</button>
+          </div>
+          <p id="retry-status" data-testid="retry-status" role="status"></p>
+        </section>
+
+        <section class="card" aria-labelledby="h-poll">
+          <h2 id="h-poll">4. Polling a job <code>GET assets/data/api/status.json</code></h2>
+          <p class="help">Polls every <span data-testid="poll-interval" id="poll-interval">1000</span> ms until the state is <code>done</code> (change with <code>?poll=200</code>).</p>
+          <div class="actions">
+            <button type="button" class="btn" id="poll-start" data-testid="poll-start">Start job</button>
+            <button type="button" class="btn secondary" id="poll-stop" disabled>Stop polling</button>
+          </div>
+          <p id="poll-status" data-testid="poll-status" role="status"></p>
+        </section>
+
+        <section class="card" aria-labelledby="h-post">
+          <h2 id="h-post">5. Send feedback <code>POST api/feedback</code></h2>
+          <p class="help">No server answers this request. Mock it to see the success path.</p>
+          <form id="feedback-form" novalidate>
+            <div class="field">
+              <label for="fb-name">Name</label>
+              <input type="text" id="fb-name" data-testid="fb-name">
+            </div>
+            <div class="field">
+              <label for="fb-message">Message</label>
+              <textarea id="fb-message" rows="2" data-testid="fb-message"></textarea>
+              <p class="error" id="fb-error" hidden>Please enter a message</p>
+            </div>
+            <button type="submit" class="btn" data-testid="fb-submit">Send feedback</button>
+          </form>
+          <p id="fb-status" data-testid="fb-status" role="status"></p>
+        </section>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Mock <code>users.json</code> with your own data and assert the list.</li>
+          <li>Fulfill it with <code>[]</code> for the empty state, status 500 for the error, and <code>route.abort()</code> for a network failure.</li>
+          <li>Delay the response and assert the spinner; then assert the request header and the <code>page</code> query param.</li>
+          <li>Make <code>slow.json</code> take longer than the timeout (use <code>?timeout=500</code>).</li>
+          <li>Fail the flaky endpoint twice, then succeed, and assert "after 3 attempts". Also fail all three.</li>
+          <li>Return <code>pending</code> twice and then <code>done</code> from the status endpoint.</li>
+          <li>Mock the POST, assert the request body with <code>postDataJSON()</code>, and assert the success text.</li>
+          <li>Use <code>page.waitForResponse</code> and <code>page.waitForRequest</code> instead of mocking.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

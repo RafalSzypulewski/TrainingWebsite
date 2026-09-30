@@ -56,7 +56,10 @@ The footer **Reset data** button clears local/session storage and cookies, then 
 | `pages/mouse.html` | done | Hover, click/dblclick/right-click/modifier click, custom context menu, drag and drop, custom slider, keyboard events and shortcuts |
 | `pages/downloads.html` | done | Blob/CSV download, custom text file, JSON export, static download, CSV import |
 | `pages/shop.html` → `product.html` → `cart.html` → `checkout.html` → `confirmation.html` | done | Product list (search, category, price, stock, sort), product detail, cart (quantities, stock limits, promo codes `SAVE10` / `FREESHIP`, shipping rules), checkout validation, declined card (`4000 0000 0000 0002`), order confirmation, full purchase flow |
-| Network, Accessibility, Responsive, Tricky | planned (step 5) | |
+| `pages/network.html` | done | Real fetches to mock with `page.route`: success/empty/500/abort, delays and timeouts, retries, polling, POST body and request-header assertions |
+| `pages/accessibility.html` | done | Good vs bad markup side by side, role/label locators, axe scans, keyboard-operable accordion and tabs, aria snapshots |
+| `pages/responsive.html` | done | Breakpoints, collapsing menu, responsive grid and table, `<picture>`, viewport/touch/colour-scheme/reduced-motion emulation |
+| `pages/tricky.html` | done | Duplicate ids, changing classes/ids, delayed-enable, self-disabling, covered and moving buttons, re-rendering list, hidden variants, duplicate text, disabled/readonly/contenteditable |
 
 Demo accounts: `student / Password123!`, `admin / Admin123!`, `locked / Locked123!` (locked).
 
