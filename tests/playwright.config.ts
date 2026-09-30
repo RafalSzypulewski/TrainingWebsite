@@ -3,7 +3,8 @@ import path from 'node:path';
 
 // BASE_URL=https://<user>.github.io/<repo>/ npm test   -> run against the deployed site
 // (no BASE_URL)                                        -> serve the repo locally via `serve`
-const external = process.env.BASE_URL;
+// An empty BASE_URL (e.g. unset workflow input) must count as "not set".
+const external = process.env.BASE_URL?.trim() || undefined;
 // Trailing slash matters: tests use relative URLs like page.goto('pages/login.html').
 const baseURL = (external ?? 'http://localhost:4173').replace(/\/?$/, '/');
 
