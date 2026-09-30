@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Responsive - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/responsive.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div class="stack">
+        <h1>Responsive layout</h1>
+
+        <section class="card" aria-labelledby="h-env">
+          <h2 id="h-env">Detected environment</h2>
+          <dl class="env" data-testid="env">
+            <dt>Breakpoint</dt><dd id="env-breakpoint" data-testid="env-breakpoint"></dd>
+            <dt>Viewport</dt><dd id="env-viewport" data-testid="env-viewport"></dd>
+            <dt>Input</dt><dd id="env-input" data-testid="env-input"></dd>
+            <dt>Color scheme</dt><dd id="env-scheme" data-testid="env-scheme"></dd>
+            <dt>Reduced motion</dt><dd id="env-motion" data-testid="env-motion"></dd>
+            <dt>Orientation</dt><dd id="env-orientation" data-testid="env-orientation"></dd>
+          </dl>
+          <p class="help">Breakpoints: mobile &lt; 640px, tablet 640&ndash;1023px, desktop &ge; 1024px (based on the viewport, not the window).</p>
+        </section>
+
+        <section class="card" aria-labelledby="h-nav">
+          <h2 id="h-nav">Collapsing navigation</h2>
+          <nav class="demo-nav" aria-label="Demo">
+            <button type="button" class="demo-nav-toggle btn secondary small" id="demo-toggle" aria-expanded="false" aria-controls="demo-menu" data-testid="demo-toggle">&#9776; Menu</button>
+            <ul class="demo-nav-menu" id="demo-menu" data-testid="demo-menu">
+              <li><a href="#home">Home</a></li>
+              <li><a href="#products">Products</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </nav>
+          <p class="mobile-only" data-testid="mobile-only">Shown only on mobile: tap the menu button.</p>
+          <p class="desktop-only" data-testid="desktop-only">Shown only from tablet width up: the menu is always visible.</p>
+        </section>
+
+        <section class="card" aria-labelledby="h-grid">
+          <h2 id="h-grid">Card grid (1 / 2 / 3 columns)</h2>
+          <div class="resp-grid" id="resp-grid" data-testid="resp-grid">
+            <article class="tile">One</article>
+            <article class="tile">Two</article>
+            <article class="tile">Three</article>
+            <article class="tile">Four</article>
+            <article class="tile">Five</article>
+            <article class="tile">Six</article>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="h-table">
+          <h2 id="h-table">Table that becomes cards on mobile</h2>
+          <table class="resp-table" data-testid="resp-table">
+            <thead><tr><th scope="col">Plan</th><th scope="col">Price</th><th scope="col">Users</th></tr></thead>
+            <tbody>
+              <tr><td data-label="Plan">Starter</td><td data-label="Price">$9</td><td data-label="Users">1</td></tr>
+              <tr><td data-label="Plan">Team</td><td data-label="Price">$29</td><td data-label="Users">10</td></tr>
+              <tr><td data-label="Plan">Business</td><td data-label="Price">$99</td><td data-label="Users">100</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="card" aria-labelledby="h-misc">
+          <h2 id="h-misc">Adaptive details</h2>
+          <picture>
+            <source media="(min-width: 1024px)" srcset="../assets/img/electronics.svg">
+            <source media="(min-width: 640px)" srcset="../assets/img/books.svg">
+            <img src="../assets/img/home.svg" alt="Responsive illustration" width="200" height="140" id="resp-image" data-testid="resp-image">
+          </picture>
+          <p class="hover-only" data-testid="hover-hint">Hover over the box to reveal a tip.</p>
+          <div class="tip-box" tabindex="0" data-testid="tip-box">Hover or focus me<span class="tip" role="note">Tip: hover only exists on mouse devices.</span></div>
+          <button type="button" class="btn touch-target" data-testid="touch-target">Comfortable tap target</button>
+        </section>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Resize with <code>page.setViewportSize</code> to 375, 800 and 1280 px wide; assert the breakpoint label.</li>
+          <li>On mobile, open the menu via the toggle; on desktop assert the toggle is hidden.</li>
+          <li>Assert the grid column count using <code>getComputedStyle</code>.</li>
+          <li>Assert which of the two "only" paragraphs is visible at each width.</li>
+          <li>Check that the table rows turn into stacked cards on mobile.</li>
+          <li>Emulate a phone with <code>isMobile</code> and <code>hasTouch</code> and use <code>tap()</code>.</li>
+          <li>Emulate <code>colorScheme: 'dark'</code> and <code>reducedMotion: 'reduce'</code>.</li>
+          <li>Assert which picture <code>currentSrc</code> the browser chose per width.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

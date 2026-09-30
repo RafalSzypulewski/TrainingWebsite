@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Accessibility - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/accessibility.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div class="stack">
+        <h1>Accessibility</h1>
+        <p class="banner info">The same widgets are built twice: once <strong>accessibly</strong> and once <strong>deliberately badly</strong>.
+          Good markup is easy to target with role and label locators; bad markup forces CSS selectors, and accessibility scanners flag it.</p>
+
+        <div class="a11y-columns">
+          <!-- ===================== GOOD ===================== -->
+          <section id="good" class="card a11y-good" aria-labelledby="good-title" data-testid="good-section">
+            <h2 id="good-title">Good markup</h2>
+
+            <h3>Contact form</h3>
+            <form id="good-form" novalidate>
+              <div class="field">
+                <label for="good-email">Email address</label>
+                <input type="email" id="good-email" autocomplete="email" required aria-describedby="good-email-hint good-email-error">
+                <p class="help" id="good-email-hint">We'll never share it.</p>
+                <p class="error" id="good-email-error" role="alert"></p>
+              </div>
+              <button type="submit" class="btn">Subscribe</button>
+            </form>
+            <p id="good-status" role="status"></p>
+
+            <h3>Icon button and image</h3>
+            <p>
+              <button type="button" class="btn secondary" id="good-icon-btn" aria-label="Add to favourites"><span aria-hidden="true">&#9733;</span></button>
+              <img src="../assets/img/books.svg" alt="Stack of programming books" width="80" height="56">
+            </p>
+
+            <h3>Accordion</h3>
+            <div class="accordion">
+              <h4><button type="button" class="accordion-btn" id="good-acc-btn" aria-expanded="false" aria-controls="good-acc-panel">Shipping information</button></h4>
+              <div id="good-acc-panel" role="region" aria-labelledby="good-acc-btn" hidden>Orders ship within two business days.</div>
+            </div>
+
+            <h3>Tabs</h3>
+            <div class="tabs" id="good-tabs">
+              <div role="tablist" aria-label="Product information">
+                <button role="tab" id="tab-desc" aria-selected="true" aria-controls="panel-desc" tabindex="0">Description</button>
+                <button role="tab" id="tab-reviews" aria-selected="false" aria-controls="panel-reviews" tabindex="-1">Reviews</button>
+              </div>
+              <div role="tabpanel" id="panel-desc" aria-labelledby="tab-desc" tabindex="0">A sturdy ceramic mug.</div>
+              <div role="tabpanel" id="panel-reviews" aria-labelledby="tab-reviews" tabindex="0" hidden>Rated 4.5 by 120 customers.</div>
+            </div>
+
+            <h3>Link</h3>
+            <p><a href="../README.md">Read the full accessibility guide</a></p>
+          </section>
+
+          <!-- ===================== BAD ===================== -->
+          <section id="bad" class="card a11y-bad" data-testid="bad-section">
+            <div class="fake-heading" id="bad-title">Bad markup</div>
+
+            <h5>Contact form</h5>
+            <form id="bad-form" novalidate>
+              <div class="field">
+                <span class="fake-label">Email address</span><br>
+                <input type="email" id="bad-email">
+                <span class="error" id="bad-email-error"></span>
+              </div>
+              <div class="btn fake-btn" id="bad-submit" data-testid="bad-submit">Subscribe</div>
+            </form>
+            <p id="bad-status"></p>
+
+            <h5>Icon button and image</h5>
+            <p>
+              <button type="button" class="btn secondary" id="bad-icon-btn"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l3 7 7 .6-5.3 4.7 1.7 7.2L12 17.8 5.6 21.5l1.7-7.2L2 9.6 9 9z"/></svg></button>
+              <img src="../assets/img/books.svg" width="80" height="56">
+            </p>
+
+            <h5>Accordion</h5>
+            <div class="accordion">
+              <div class="accordion-btn" id="bad-acc-btn" data-testid="bad-acc-btn">Shipping information</div>
+              <div id="bad-acc-panel" style="display:none">Orders ship within two business days.</div>
+            </div>
+
+            <h5>Tabs</h5>
+            <div class="tabs" id="bad-tabs">
+              <div>
+                <span class="fake-tab selected" data-panel="bad-panel-desc">Description</span>
+                <span class="fake-tab" data-panel="bad-panel-reviews">Reviews</span>
+              </div>
+              <div id="bad-panel-desc">A sturdy ceramic mug.</div>
+              <div id="bad-panel-reviews" style="display:none">Rated 4.5 by 120 customers.</div>
+            </div>
+
+            <h5>Low contrast and vague link</h5>
+            <p class="low-contrast" data-testid="low-contrast">This text is very hard to read.</p>
+            <p><a href="../README.md"><span class="sr-only"></span></a> <a href="../README.md">click here</a></p>
+          </section>
+        </div>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>In the good section find everything with <code>getByRole</code> and <code>getByLabel</code> (no test ids).</li>
+          <li>Try the same on the bad section and note what fails. Which locators still work?</li>
+          <li>Run <code>@axe-core/playwright</code> on each section and compare the violations.</li>
+          <li>Submit the good form empty, assert the <code>alert</code> message and <code>aria-invalid</code>.</li>
+          <li>Operate the good accordion and tabs with the keyboard only (Enter, Arrow keys).</li>
+          <li>Assert <code>aria-expanded</code> and <code>aria-selected</code> states change.</li>
+          <li>Use <code>toMatchAriaSnapshot</code> on the good form.</li>
+          <li>Check the tab order and visible focus with <code>keyboard.press('Tab')</code>.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
