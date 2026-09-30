@@ -1,0 +1,5 @@
+[
+  { "username": "student", "password": "Password123!", "role": "user", "locked": false },
+  { "username": "admin", "password": "Admin123!", "role": "admin", "locked": false },
+  { "username": "locked", "password": "Locked123!", "role": "user", "locked": true }
+]

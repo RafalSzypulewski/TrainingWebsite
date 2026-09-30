@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Forms - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/forms.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div>
+        <h1>Forms</h1>
+
+        <div id="form-summary" class="banner error" data-testid="form-summary" role="alert" hidden></div>
+        <div id="form-server-error" class="banner error" data-testid="form-server-error" role="alert" hidden></div>
+
+        <form id="signup-form" class="card" data-testid="signup-form" novalidate>
+          <h2>Registration</h2>
+          <div class="form-grid">
+            <div class="field">
+              <label for="fullName">Full name *</label>
+              <input type="text" id="fullName" name="fullName" data-testid="full-name" autocomplete="name">
+              <p class="error" id="fullName-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" data-testid="email" autocomplete="email">
+              <p class="error" id="email-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="password">Password *</label>
+              <input type="password" id="password" name="password" data-testid="password" autocomplete="new-password">
+              <p class="help">At least 8 characters, including a number.</p>
+              <p class="error" id="password-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="confirmPassword">Confirm password *</label>
+              <input type="password" id="confirmPassword" name="confirmPassword" data-testid="confirm-password" autocomplete="new-password">
+              <p class="error" id="confirmPassword-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="age">Age *</label>
+              <input type="number" id="age" name="age" data-testid="age" min="18" max="99">
+              <p class="error" id="age-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input type="tel" id="phone" name="phone" data-testid="phone" placeholder="+48 123 456 789">
+              <p class="error" id="phone-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="website">Website</label>
+              <input type="url" id="website" name="website" placeholder="https://example.com">
+              <p class="error" id="website-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="birthdate">Birth date *</label>
+              <input type="date" id="birthdate" name="birthdate" data-testid="birthdate">
+              <p class="error" id="birthdate-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="appointment">Preferred call time</label>
+              <input type="time" id="appointment" name="appointment">
+            </div>
+            <div class="field">
+              <label for="favColor">Favourite colour</label>
+              <input type="color" id="favColor" name="favColor" value="#2f5bea">
+            </div>
+            <div class="field">
+              <label for="satisfaction">Excitement level: <output id="satisfaction-output" data-testid="range-output">5</output></label>
+              <input type="range" id="satisfaction" name="satisfaction" min="0" max="10" step="1" value="5" data-testid="range">
+            </div>
+            <div class="field">
+              <label for="language">Favourite language (datalist)</label>
+              <input type="text" id="language" name="language" list="languages" autocomplete="off">
+              <datalist id="languages"><option value="TypeScript"><option value="JavaScript"><option value="Python"><option value="Java"><option value="C#"></datalist>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="country">Country *</label>
+            <select id="country" name="country" data-testid="country">
+              <option value="">-- Select a country --</option>
+              <option value="pl">Poland</option>
+              <option value="de">Germany</option>
+              <option value="us">United States</option>
+              <option value="jp">Japan</option>
+            </select>
+            <p class="error" id="country-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="skills">Skills (multi-select)</label>
+            <select id="skills" name="skills" multiple size="4" data-testid="skills">
+              <option value="html">HTML</option>
+              <option value="css">CSS</option>
+              <option value="js">JavaScript</option>
+              <option value="ts">TypeScript</option>
+            </select>
+          </div>
+
+          <fieldset id="gender-group" aria-describedby="gender-error">
+            <legend>Account type *</legend>
+            <div class="inline">
+              <label><input type="radio" name="gender" value="personal" data-testid="type-personal"> Personal</label>
+              <label><input type="radio" name="gender" value="business"> Business</label>
+              <label><input type="radio" name="gender" value="student"> Student</label>
+            </div>
+            <p class="error" id="gender-error" hidden></p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Interests</legend>
+            <div class="inline">
+              <label><input type="checkbox" name="interests" value="testing" data-testid="interest-testing"> Testing</label>
+              <label><input type="checkbox" name="interests" value="devops"> DevOps</label>
+              <label><input type="checkbox" name="interests" value="design"> Design</label>
+            </div>
+          </fieldset>
+
+          <div class="field">
+            <label for="bio">Bio</label>
+            <textarea id="bio" name="bio" rows="3" data-testid="bio"></textarea>
+            <p class="help"><span id="bio-count" data-testid="bio-count">0/200</span> characters</p>
+            <p class="error" id="bio-error" hidden></p>
+          </div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label for="avatar">Avatar (PNG/JPG, max 1 MB)</label>
+              <input type="file" id="avatar" name="avatar" accept="image/png,image/jpeg" data-testid="avatar">
+              <p class="error" id="avatar-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="documents">Documents (PDF/TXT, max 3 files)</label>
+              <input type="file" id="documents" name="documents" accept=".pdf,.txt" multiple data-testid="documents">
+              <ul id="documents-list" data-testid="documents-list"></ul>
+              <p class="error" id="documents-error" hidden></p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label><input type="checkbox" id="terms" name="terms"> I accept the terms and conditions *</label>
+            <p class="error" id="terms-error" hidden></p>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn" data-testid="submit">Register</button>
+            <button type="reset" class="btn secondary">Clear form</button>
+            <span class="spinner" data-testid="form-spinner" role="progressbar" aria-label="Submitting" hidden></span>
+          </div>
+        </form>
+
+        <section id="result" class="card" style="margin-top:16px" data-testid="result-panel" hidden>
+          <div class="banner success" role="status" data-testid="success-message">Registration successful!</div>
+          <pre class="result" id="result-json" data-testid="result-json"></pre>
+        </section>
+
+        <form id="newsletter-form" class="card" style="margin-top:24px" data-testid="newsletter-form">
+          <h2>Newsletter (native HTML5 validation)</h2>
+          <p class="help">No <code>novalidate</code> here: the browser shows its own messages.</p>
+          <div class="field">
+            <label for="news-email">Email</label>
+            <input type="email" id="news-email" name="email" required>
+          </div>
+          <div class="field">
+            <label for="news-code">Promo code (format ABC-123)</label>
+            <input type="text" id="news-code" name="code" pattern="[A-Z]{3}-[0-9]{3}" title="Format: ABC-123" required>
+          </div>
+          <button type="submit" class="btn">Subscribe</button>
+          <p id="newsletter-status" role="status" data-testid="newsletter-status"></p>
+        </form>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Submit the empty form and assert each required-field error message.</li>
+          <li>Fill every field (text, number, date, time, colour, range, select, multi-select, radio, checkbox) and assert the JSON result.</li>
+          <li>Enter mismatching passwords; assert the error clears once fixed.</li>
+          <li>Set the range slider to 8 and assert the output text.</li>
+          <li>Type in the bio and assert the character counter; exceed 200 characters.</li>
+          <li>Upload a valid avatar, then an invalid file type; assert both outcomes.</li>
+          <li>Upload 4 documents and assert the limit error; upload 2 and assert the list.</li>
+          <li>Submit the newsletter form and read <code>validationMessage</code> from the browser.</li>
+          <li>Use <code>?delay=2000</code> / <code>?fail=true</code> and assert spinner and server error.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

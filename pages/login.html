@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/login.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div>
+        <h1>Login</h1>
+        <div class="card">
+          <div id="login-notice" class="banner info" data-testid="login-notice" role="status" hidden></div>
+          <div id="login-error" class="banner error" data-testid="login-error" role="alert" hidden></div>
+
+          <form id="login-form" novalidate>
+            <div class="field">
+              <label for="username">Username</label>
+              <input type="text" id="username" name="username" data-testid="login-username" autocomplete="username">
+              <p class="error" id="username-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <div class="password-row">
+                <input type="password" id="password" name="password" data-testid="login-password" autocomplete="current-password">
+                <button type="button" class="btn secondary small" id="toggle-password" aria-pressed="false">Show</button>
+              </div>
+              <p class="error" id="password-error" hidden></p>
+            </div>
+            <div class="field inline">
+              <label><input type="checkbox" id="remember" name="remember" data-testid="login-remember"> Remember me</label>
+            </div>
+            <div class="actions">
+              <button type="submit" class="btn" data-testid="login-submit">Log in</button>
+              <span class="spinner" data-testid="login-spinner" role="progressbar" aria-label="Signing in" hidden></span>
+            </div>
+            <p><a href="#">Forgot your password?</a></p>
+          </form>
+        </div>
+
+        <p class="hint" style="margin-top:16px">
+          Demo accounts &mdash; <code>student</code> / <code>Password123!</code>,
+          <code>admin</code> / <code>Admin123!</code>,
+          <code>locked</code> / <code>Locked123!</code> (locked account).
+        </p>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Log in as <code>student</code> and assert you land on the dashboard.</li>
+          <li>Submit an empty form and assert both validation messages.</li>
+          <li>Assert the error for a wrong password and for the locked account.</li>
+          <li>Open the dashboard while logged out; after logging in you should return to it.</li>
+          <li>Tick "Remember me" and assert where the session is stored (local vs session storage).</li>
+          <li>Use <code>?delay=2000</code> and assert the spinner appears, then disappears.</li>
+          <li>Use <code>?fail=true</code> and assert the server error banner.</li>
+          <li>Locate the "Show" button and the "Forgot" link without a test id.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "pw-practice-lab",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Static practice site for Playwright test automation",
+  "scripts": {
+    "start": "serve . -l 4173",
+    "test": "playwright test -c tests/playwright.config.ts",
+    "test:ui": "playwright test -c tests/playwright.config.ts --ui",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.0.0",
+    "serve": "^14.2.4"
+  }
+}

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PW Practice Lab</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="assets/js/layout.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container">
+      <section class="hero">
+        <h1 data-testid="home-title">Playwright Practice Lab</h1>
+        <p>A static, backend-free website for practicing test automation. Everything is fake: state lives in
+          <code>localStorage</code>, <code>sessionStorage</code> and cookies.</p>
+      </section>
+
+      <h2 class="section-title">Pages</h2>
+      <div class="grid" data-testid="page-list">
+        <article class="card"><h3><a href="pages/login.html">Login</a></h3><p>Fake auth, remember me, protected page redirect.</p><span class="badge">Core</span></article>
+        <article class="card"><h3><a href="pages/dashboard.html">Dashboard</a></h3><p>Protected page. Redirects to login when signed out.</p><span class="badge">Core</span></article>
+        <article class="card"><h3><a href="pages/forms.html">Forms</a></h3><p>Every input type, validation, file upload.</p><span class="badge">Core</span></article>
+        <article class="card"><h3>Dynamic content</h3><p>Delays, spinners, infinite scroll.</p><span class="badge soon">Coming soon</span></article>
+        <article class="card"><h3>Tables</h3><p>Sort, filter, paginate, row actions.</p><span class="badge soon">Coming soon</span></article>
+      </div>
+
+      <h2 class="section-title">Query-param toggles</h2>
+      <p>Add these to any page URL to get reproducible behavior:</p>
+      <table class="card table" data-testid="toggle-table">
+        <thead><tr><th align="left">Param</th><th align="left">Effect</th><th align="left">Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>delay</code></td><td>Simulated latency in ms for fake requests</td><td><a href="pages/login.html?delay=2000">login.html?delay=2000</a></td></tr>
+          <tr><td><code>fail</code></td><td>Fake requests return a server error</td><td><a href="pages/login.html?fail=true">login.html?fail=true</a></td></tr>
+        </tbody>
+      </table>
+      <p>Use the <strong>Reset data</strong> button in the footer to clear all stored state.</p>
+    </div>
+  </main>
+</body>
+</html>

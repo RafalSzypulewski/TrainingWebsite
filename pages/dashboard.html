@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/dashboard.js" defer></script>
+</head>
+<body>
+  <main hidden>
+    <div class="container">
+      <h1 data-testid="dashboard-title">Dashboard</h1>
+      <p>Protected page &mdash; you only see this when signed in.</p>
+      <div class="card">
+        <h2 id="welcome" data-testid="welcome"></h2>
+        <dl>
+          <dt>Role</dt><dd data-testid="dashboard-role"></dd>
+          <dt>Session stored in</dt><dd data-testid="dashboard-storage"></dd>
+        </dl>
+        <section id="admin-panel" data-testid="admin-panel" hidden>
+          <h3>Admin panel</h3>
+          <p>Only visible to the <code>admin</code> role.</p>
+        </section>
+        <button type="button" class="btn danger" id="logout" data-testid="logout">Log out</button>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
