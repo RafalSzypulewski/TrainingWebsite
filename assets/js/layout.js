@@ -147,11 +147,22 @@
     footer.className = 'site-footer';
     footer.innerHTML = `
       <div class="container">
-        <p>Practice site for test automation. All data is fake and stored in your browser only.</p>
+        <p>Practice site for test automation. All data is fake and stored in your browser only.<br>
+          <span class="version" data-testid="site-version" hidden></span></p>
         <button type="button" class="btn secondary small" data-testid="reset-data">Reset data</button>
       </div>`;
     document.body.append(footer);
     footer.querySelector('button').addEventListener('click', PW.resetData);
+
+    // Version comes from assets/data/version.json; the deploy workflow adds the commit and build date.
+    fetch(PW.url('assets/data/version.json'), { cache: 'no-cache' })
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((info) => {
+        const el = footer.querySelector('[data-testid="site-version"]');
+        el.textContent = ['v' + info.version, info.commit, info.built && 'built ' + info.built].filter(Boolean).join(' \u00b7 ');
+        el.hidden = false;
+      })
+      .catch(() => {}); // version info is optional
 
     // Dropdown groups: click toggles, Escape / outside click closes (hover and focus also open via CSS).
     const groups = [...header.querySelectorAll('.nav-group')];

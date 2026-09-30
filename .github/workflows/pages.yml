@@ -27,6 +27,16 @@ jobs:
           mkdir _site
           cp -r index.html pages assets _site/
           touch _site/.nojekyll
+      - name: Stamp version info (commit and build date)
+        run: |
+          node -e "
+            const fs = require('fs');
+            const file = '_site/assets/data/version.json';
+            const info = JSON.parse(fs.readFileSync(file, 'utf8'));
+            info.commit = process.env.GITHUB_SHA.slice(0, 7);
+            info.built = new Date().toISOString().slice(0, 10);
+            fs.writeFileSync(file, JSON.stringify(info, null, 2));
+          "
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

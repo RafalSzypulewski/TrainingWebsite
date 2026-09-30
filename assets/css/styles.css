@@ -359,3 +359,5 @@ kbd { background: #eceefb; border: 1px solid var(--border); border-bottom-width:
 .spacer { height: 1800px; display: flex; align-items: center; justify-content: center; color: var(--muted); background: repeating-linear-gradient(180deg, #fafbff, #fafbff 40px, #f1f3fb 40px, #f1f3fb 80px); border-radius: var(--radius); margin-bottom: 12px; }
 
 .fake-label { display: inline-block; margin-bottom: 4px; font-weight: 600; }
+
+.version { font-size: 0.8rem; color: #9ea4d6; }
