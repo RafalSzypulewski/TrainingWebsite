@@ -92,6 +92,10 @@
     ['pages/forms.html', 'Forms'],
     ['pages/dynamic.html', 'Dynamic'],
     ['pages/tables.html', 'Tables'],
+    ['pages/alerts.html', 'Alerts'],
+    ['pages/windows.html', 'Windows'],
+    ['pages/mouse.html', 'Mouse'],
+    ['pages/downloads.html', 'Downloads'],
   ];
 
   function render() {

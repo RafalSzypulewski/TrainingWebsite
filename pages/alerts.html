@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alerts and dialogs - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/alerts.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div class="stack">
+        <h1>Alerts &amp; dialogs</h1>
+
+        <p class="banner info" role="status" data-testid="dialog-result" id="dialog-result">Nothing has happened yet.</p>
+
+        <section class="card" aria-labelledby="h-native">
+          <h2 id="h-native">1. Native browser dialogs</h2>
+          <p class="help">Playwright auto-dismisses these unless you register a <code>page.on('dialog')</code> handler.</p>
+          <div class="actions">
+            <button type="button" class="btn" id="alert-btn" data-testid="alert-btn">Show alert</button>
+            <button type="button" class="btn" id="confirm-btn" data-testid="confirm-btn">Show confirm</button>
+            <button type="button" class="btn" id="prompt-btn">Show prompt</button>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="h-modal">
+          <h2 id="h-modal">2. Modal dialog</h2>
+          <p class="help">A real <code>&lt;dialog&gt;</code> element opened with <code>showModal()</code>. Escape closes it.</p>
+          <button type="button" class="btn" id="modal-btn" data-testid="modal-btn">Open modal</button>
+
+          <dialog id="modal" class="modal" aria-labelledby="modal-title" data-testid="modal">
+            <form method="dialog">
+              <h2 id="modal-title">Subscribe to updates</h2>
+              <div class="field">
+                <label for="modal-email">Email</label>
+                <input type="email" id="modal-email" data-testid="modal-email">
+              </div>
+              <div class="actions">
+                <button type="submit" value="confirm" class="btn" data-testid="modal-confirm">Confirm</button>
+                <button type="submit" value="cancel" class="btn secondary" formnovalidate>Cancel</button>
+              </div>
+            </form>
+          </dialog>
+        </section>
+
+        <section class="card" aria-labelledby="h-toast">
+          <h2 id="h-toast">3. Toast notifications</h2>
+          <p class="help">Toasts auto-dismiss after 3000 ms (<code>?delay</code> changes it) and have a close button.</p>
+          <div class="actions">
+            <button type="button" class="btn" id="toast-success" data-testid="toast-success">Success toast</button>
+            <button type="button" class="btn danger" id="toast-error">Error toast</button>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="h-cookie">
+          <h2 id="h-cookie">4. Cookie banner</h2>
+          <p>The banner at the bottom of the page overlays content until you choose. Your choice is stored in the
+            <code>pw_cookie_consent</code> cookie. Use <strong>Reset data</strong> to see it again.</p>
+          <p>Consent status: <strong id="consent-status" data-testid="consent-status"></strong></p>
+        </section>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Handle the alert with <code>page.once('dialog')</code> and assert its message.</li>
+          <li>Accept and then dismiss the confirm; assert both results.</li>
+          <li>Answer the prompt with text, and also dismiss it.</li>
+          <li>Open the modal, fill the email and confirm; then cancel; then close with Escape.</li>
+          <li>Trigger a toast, assert it, close it manually, and wait for another to disappear.</li>
+          <li>Accept the cookie banner and assert the cookie value via <code>context.cookies()</code>.</li>
+          <li>Try to click a button hidden behind the cookie banner before dismissing it.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+
+  <div id="toast-region" class="toast-region" role="status" aria-live="polite"></div>
+
+  <div id="cookie-banner" class="cookie-banner" role="dialog" aria-label="Cookie consent" data-testid="cookie-banner" hidden>
+    <p>We use cookies to improve your experience (not really &mdash; this is a practice site).</p>
+    <div class="actions">
+      <button type="button" class="btn" id="cookie-accept" data-testid="cookie-accept">Accept all</button>
+      <button type="button" class="btn secondary" id="cookie-reject">Reject non-essential</button>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Popup - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container">
+      <h1 data-testid="popup-title">I am a new tab</h1>
+      <div class="card">
+        <p data-testid="popup-message">Opened from: <strong id="popup-from"></strong></p>
+        <button type="button" class="btn" id="popup-close" data-testid="popup-close">Close this window</button>
+      </div>
+    </div>
+  </main>
+  <script>
+    document.getElementById('popup-from').textContent = new URLSearchParams(location.search).get('from') || 'unknown';
+    document.getElementById('popup-close').addEventListener('click', () => window.close());
+  </script>
+</body>
+</html>

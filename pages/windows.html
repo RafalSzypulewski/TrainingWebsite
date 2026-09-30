@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Windows and frames - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/windows.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div class="stack">
+        <h1>Windows &amp; frames</h1>
+
+        <section class="card" aria-labelledby="h-tabs">
+          <h2 id="h-tabs">1. New tabs and windows</h2>
+          <div class="actions">
+            <a class="btn" href="popup.html?from=link" target="_blank" rel="noopener" data-testid="new-tab-link">Open link in new tab</a>
+            <button type="button" class="btn secondary" id="popup-btn" data-testid="popup-btn">Open popup window</button>
+          </div>
+          <p class="help">The popup is opened with <code>window.open()</code>.</p>
+        </section>
+
+        <section class="card" aria-labelledby="h-frame">
+          <h2 id="h-frame">2. Iframe</h2>
+          <p data-testid="outside-frame-text">This text is outside the frame.</p>
+          <iframe src="frames/frame-simple.html" title="Simple frame" name="simple-frame" id="simple-frame" data-testid="simple-frame" height="220"></iframe>
+        </section>
+
+        <section class="card" aria-labelledby="h-nested">
+          <h2 id="h-nested">3. Nested iframes</h2>
+          <iframe src="frames/frame-outer.html" title="Outer frame" name="outer-frame" data-testid="outer-frame" height="340"></iframe>
+        </section>
+
+        <section class="card" aria-labelledby="h-srcdoc">
+          <h2 id="h-srcdoc">4. Iframe with inline content (srcdoc)</h2>
+          <iframe title="Inline frame" height="90"
+            srcdoc="<body style='font-family:sans-serif'><p id='inline-text'>Hello from srcdoc</p><button onclick=&quot;this.textContent='Clicked!'&quot;>Click me</button></body>"></iframe>
+        </section>
+
+        <section class="card" aria-labelledby="h-shadow">
+          <h2 id="h-shadow">5. Shadow DOM</h2>
+          <p class="help">Playwright CSS and role locators pierce <em>open</em> shadow roots automatically.</p>
+          <user-card data-testid="user-card" name="Ada Lovelace"></user-card>
+        </section>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Click the link and get the new <code>Page</code> via <code>waitForEvent('popup')</code>; assert its heading and URL.</li>
+          <li>Open the popup window, interact with it, then close it and continue on the original page.</li>
+          <li>Use <code>frameLocator</code> to type in the iframe and click its button.</li>
+          <li>Reach the innermost frame of the nested iframes with chained <code>frameLocator</code> calls.</li>
+          <li>Find the iframe by <code>name</code> using <code>page.frame()</code>.</li>
+          <li>Read text from the <code>srcdoc</code> iframe.</li>
+          <li>Fill the input inside the shadow DOM and assert the greeting.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

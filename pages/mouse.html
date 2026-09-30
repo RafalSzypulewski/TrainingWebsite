@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mouse and keyboard - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/mouse.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div class="stack">
+        <h1>Mouse &amp; keyboard</h1>
+
+        <section class="card" aria-labelledby="h-hover">
+          <h2 id="h-hover">1. Hover</h2>
+          <div class="actions">
+            <div class="hover-target" id="hover-target" data-testid="hover-target" tabindex="0">Hover over me</div>
+            <div class="hover-menu">
+              <button type="button" class="btn secondary" aria-haspopup="true">Products</button>
+              <ul class="menu" role="menu">
+                <li role="none"><a role="menuitem" href="#laptops" data-testid="menu-laptops">Laptops</a></li>
+                <li role="none"><a role="menuitem" href="#phones">Phones</a></li>
+              </ul>
+            </div>
+          </div>
+          <p id="hover-message" data-testid="hover-message" class="banner success" role="status" hidden>You found the secret message!</p>
+        </section>
+
+        <section class="card" aria-labelledby="h-clicks">
+          <h2 id="h-clicks">2. Single, double and right click</h2>
+          <div class="click-pad" id="click-pad" data-testid="click-pad" tabindex="0">Click me in different ways</div>
+          <ul class="counters">
+            <li>Clicks: <strong data-testid="click-count" id="click-count">0</strong></li>
+            <li>Double clicks: <strong data-testid="dblclick-count" id="dblclick-count">0</strong></li>
+            <li>Right clicks: <strong data-testid="context-count" id="context-count">0</strong></li>
+            <li>Last event: <strong data-testid="last-event" id="last-event">none</strong></li>
+          </ul>
+        </section>
+
+        <section class="card" aria-labelledby="h-ctx">
+          <h2 id="h-ctx">3. Custom context menu</h2>
+          <div class="click-pad" id="context-area" data-testid="context-area">Right-click anywhere in this box</div>
+          <p id="context-result" data-testid="context-result" role="status">No action chosen.</p>
+          <ul class="context-menu" id="context-menu" role="menu" hidden>
+            <li role="none"><button type="button" role="menuitem">Copy</button></li>
+            <li role="none"><button type="button" role="menuitem">Rename</button></li>
+            <li role="none"><button type="button" role="menuitem">Delete</button></li>
+          </ul>
+        </section>
+
+        <section class="card" aria-labelledby="h-dnd">
+          <h2 id="h-dnd">4. Drag and drop</h2>
+          <div class="dnd">
+            <section class="dropzone" data-testid="zone-todo" aria-label="To do" id="zone-todo">
+              <h3>To do</h3>
+              <ul>
+                <li draggable="true" id="task-1" data-testid="task-1">Write tests</li>
+                <li draggable="true" id="task-2" data-testid="task-2">Review code</li>
+                <li draggable="true" id="task-3">Deploy site</li>
+              </ul>
+            </section>
+            <section class="dropzone" data-testid="zone-done" aria-label="Done" id="zone-done">
+              <h3>Done</h3>
+              <ul></ul>
+            </section>
+          </div>
+          <p id="dnd-status" data-testid="dnd-status" role="status">Drag a task between the lists.</p>
+        </section>
+
+        <section class="card" aria-labelledby="h-slider">
+          <h2 id="h-slider">5. Custom slider</h2>
+          <div class="slider" id="slider" role="slider" tabindex="0" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25" data-testid="slider">
+            <div class="slider-fill" id="slider-fill"></div>
+            <div class="slider-thumb" id="slider-thumb"></div>
+          </div>
+          <p>Volume: <strong id="slider-value" data-testid="slider-value">25</strong></p>
+        </section>
+
+        <section class="card" aria-labelledby="h-kb">
+          <h2 id="h-kb">6. Keyboard</h2>
+          <div class="field">
+            <label for="key-input">Press any key here</label>
+            <input type="text" id="key-input" data-testid="key-input" autocomplete="off">
+          </div>
+          <p id="key-info" data-testid="key-info" role="status">No key pressed yet.</p>
+          <p id="shortcut-status" data-testid="shortcut-status" role="status">Try the shortcut <kbd>Ctrl</kbd>+<kbd>K</kbd> anywhere on the page.</p>
+
+          <div class="field">
+            <label for="quick-add">Quick add (Enter adds, Escape clears)</label>
+            <input type="text" id="quick-add" data-testid="quick-add" autocomplete="off">
+          </div>
+          <ul id="quick-list" data-testid="quick-list"></ul>
+        </section>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Hover the target and assert the message; move the mouse away and assert it hides.</li>
+          <li>Hover "Products" and click a submenu item.</li>
+          <li>Single click, double click, right click and Shift+click the pad; assert the counters.</li>
+          <li>Right-click the context area, choose "Rename" and assert the result.</li>
+          <li>Drag "Write tests" to Done with <code>dragTo</code>, and back again.</li>
+          <li>Set the slider to 80 using the keyboard and then with the mouse.</li>
+          <li>Type in the key input and assert <code>key</code> and <code>code</code> for letters, Enter, arrows and modifiers.</li>
+          <li>Trigger the Ctrl+K shortcut. Add items with Enter, clear with Escape.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
