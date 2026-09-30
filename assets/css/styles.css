@@ -192,3 +192,45 @@ th[aria-sort="descending"] .sort-btn::after { content: " \25BC"; font-size: 0.7e
 .pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; }
 .pager p { margin: 0; color: var(--muted); }
 .pager nav { display: flex; flex-wrap: wrap; gap: 4px; }
+
+/* Alerts & dialogs */
+.modal { border: 0; border-radius: 14px; padding: 24px; width: min(420px, 92vw); box-shadow: 0 20px 60px rgba(20, 24, 58, 0.35); }
+.modal::backdrop { background: rgba(20, 24, 58, 0.55); }
+.modal h2 { margin-top: 0; }
+.toast-region { position: fixed; top: 76px; right: 16px; display: flex; flex-direction: column; gap: 8px; z-index: 80; }
+.toast { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--radius); color: #fff; box-shadow: var(--shadow); min-width: 220px; }
+.toast.success { background: var(--success); }
+.toast.error { background: var(--danger); }
+.toast button { margin-left: auto; background: none; border: 0; color: #fff; font-size: 1.2rem; cursor: pointer; }
+.cookie-banner { position: fixed; left: 0; right: 0; bottom: 0; background: #1e1b4b; color: #fff; padding: 16px 24px; z-index: 90; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; }
+.cookie-banner p { margin: 0; }
+.cookie-banner .actions { margin: 0; }
+
+/* Windows & frames */
+iframe { width: 100%; border: 1px solid var(--border); border-radius: var(--radius); background: #fff; }
+
+/* Mouse & keyboard */
+.hover-target { padding: 14px 18px; border: 2px dashed var(--primary); border-radius: var(--radius); cursor: pointer; background: #eef0ff; }
+.hover-target:hover { background: #dfe2ff; }
+.hover-menu { position: relative; }
+.hover-menu .menu { display: none; position: absolute; top: 100%; left: 0; min-width: 160px; margin: 0; padding: 6px; list-style: none; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); z-index: 20; }
+.hover-menu:hover .menu, .hover-menu:focus-within .menu { display: block; }
+.hover-menu .menu a { display: block; padding: 6px 10px; text-decoration: none; color: var(--text); border-radius: 6px; }
+.hover-menu .menu a:hover { background: #eef0ff; }
+.click-pad { user-select: none; padding: 28px; text-align: center; border: 2px dashed var(--border); border-radius: var(--radius); background: #fafbff; cursor: pointer; }
+.counters { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 24px; padding: 0; margin: 12px 0 0; }
+.context-menu { position: fixed; z-index: 70; list-style: none; margin: 0; padding: 6px; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); min-width: 150px; }
+.context-menu button { all: unset; display: block; width: 100%; box-sizing: border-box; padding: 6px 10px; cursor: pointer; border-radius: 6px; }
+.context-menu button:hover, .context-menu button:focus-visible { background: #eef0ff; }
+.dnd { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.dropzone { min-height: 150px; padding: 12px; border: 2px dashed var(--border); border-radius: var(--radius); background: #fafbff; }
+.dropzone.over { border-color: var(--primary); background: #eef0ff; }
+.dropzone h3 { margin: 0 0 8px; font-size: 1rem; }
+.dropzone ul { list-style: none; margin: 0; padding: 0; min-height: 90px; }
+.dropzone li { padding: 8px 12px; margin-bottom: 6px; background: #fff; border: 1px solid var(--border); border-radius: 6px; cursor: grab; }
+.dropzone li.dragging { opacity: 0.4; }
+.slider { position: relative; height: 8px; margin: 22px 10px; background: #e4e7f2; border-radius: 999px; cursor: pointer; touch-action: none; }
+.slider-fill { position: absolute; inset: 0 auto 0 0; background: var(--primary); border-radius: 999px; pointer-events: none; }
+.slider-thumb { position: absolute; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; background: #fff; border: 3px solid var(--primary); border-radius: 50%; pointer-events: none; box-shadow: var(--shadow); }
+.slider:focus-visible { outline: none; box-shadow: var(--focus); }
+kbd { background: #eceefb; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; padding: 0 6px; font-size: 0.85em; }

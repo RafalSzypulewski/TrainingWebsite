@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Downloads - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/downloads.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div class="stack">
+        <h1>Downloads</h1>
+
+        <p class="banner info" id="download-status" data-testid="download-status" role="status">No download started.</p>
+        <p class="banner error" id="download-error" data-testid="download-error" role="alert" hidden></p>
+
+        <section class="card" aria-labelledby="h-csv">
+          <h2 id="h-csv">1. Generated CSV (Blob)</h2>
+          <p class="help">Fetches the employee data and builds <code>employees.csv</code> in the browser (default latency 500 ms).</p>
+          <div class="actions">
+            <button type="button" class="btn" id="csv-btn" data-testid="csv-btn">Download employees CSV</button>
+            <span class="spinner" id="csv-spinner" role="progressbar" aria-label="Preparing file" hidden></span>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="h-text">
+          <h2 id="h-text">2. Custom text file</h2>
+          <form id="text-form" novalidate>
+            <div class="field">
+              <label for="file-name">File name (without extension)</label>
+              <input type="text" id="file-name" data-testid="file-name" value="note">
+            </div>
+            <div class="field">
+              <label for="file-content">Content</label>
+              <textarea id="file-content" rows="3" data-testid="file-content"></textarea>
+              <p class="error" id="file-content-error" hidden>Content is required</p>
+            </div>
+            <button type="submit" class="btn" data-testid="text-btn">Download text file</button>
+          </form>
+        </section>
+
+        <section class="card" aria-labelledby="h-other">
+          <h2 id="h-other">3. JSON export and static file</h2>
+          <div class="actions">
+            <button type="button" class="btn secondary" id="json-btn">Export my browser data (JSON)</button>
+            <a class="btn secondary" href="../assets/downloads/sample-report.txt" download data-testid="static-download">Download sample report</a>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="h-import">
+          <h2 id="h-import">4. Import a CSV</h2>
+          <p class="help">Choose a CSV file (for example the one you just downloaded) to parse it in the browser.</p>
+          <div class="field">
+            <label for="csv-import">CSV file</label>
+            <input type="file" id="csv-import" accept=".csv,text/csv" data-testid="csv-import">
+          </div>
+          <p id="import-summary" data-testid="import-summary" role="status"></p>
+          <div id="import-preview" class="table-wrap" hidden>
+            <table class="data" data-testid="import-preview-table"><thead></thead><tbody></tbody></table>
+          </div>
+        </section>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Wait for the download event, assert <code>suggestedFilename()</code> is <code>employees.csv</code>.</li>
+          <li>Save it with <code>download.saveAs()</code> and read the file: check the header and 45 data rows.</li>
+          <li>Download a text file with a custom name and content, and verify both.</li>
+          <li>Submit the text form empty and assert the validation error.</li>
+          <li>Download the static sample report and check its content.</li>
+          <li>Download the CSV and upload it in the import section; assert the parsed row count.</li>
+          <li>Use <code>?fail=true</code> to make the CSV export fail.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,5 @@
+PW Practice Lab - Sample report
+================================
+Status: all systems nominal
+Tests passed: 42
+Tests failed: 0

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Outer frame</title>
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body style="display:block;min-height:0;padding:16px">
+  <h2 data-testid="outer-title">Outer frame</h2>
+  <button type="button" class="btn secondary" id="outer-btn">Outer button</button>
+  <p id="outer-out" role="status"></p>
+  <iframe src="frame-inner.html" title="Inner frame" name="inner-frame" height="170"></iframe>
+  <script>
+    document.getElementById('outer-btn').addEventListener('click', () => {
+      document.getElementById('outer-out').textContent = 'Outer button clicked';
+    });
+  </script>
+</body>
+</html>

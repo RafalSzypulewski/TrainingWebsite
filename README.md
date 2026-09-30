@@ -51,7 +51,10 @@ The footer **Reset data** button clears local/session storage and cookies, then 
 | `pages/forms.html` | done | All input types, validation messages, range/counter, single + multiple file upload, native HTML5 validation |
 | `pages/dynamic.html` | done | Loading spinners, delayed/disappearing elements, delayed enable, progress bar, infinite scroll |
 | `pages/tables.html` | done | Sort, search, filters, pagination, inline edit, delete with confirmation, bulk delete, persisted changes |
-| Alerts, Windows & frames, Mouse & keyboard, Downloads | planned (step 3) | |
+| `pages/alerts.html` | done | Native alert/confirm/prompt handlers, `<dialog>` modal, auto-dismissing toasts, cookie banner overlay (cookie assertions) |
+| `pages/windows.html` | done | New tab/popup, iframe, nested iframes, `srcdoc` frame, open shadow DOM |
+| `pages/mouse.html` | done | Hover, click/dblclick/right-click/modifier click, custom context menu, drag and drop, custom slider, keyboard events and shortcuts |
+| `pages/downloads.html` | done | Blob/CSV download, custom text file, JSON export, static download, CSV import |
 | Mini shop | planned (step 4) | |
 | Network, Accessibility, Responsive, Tricky | planned (step 5) | |
 
