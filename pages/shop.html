@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shop - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/shop-common.js" defer></script>
+  <script src="../assets/js/shop.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div>
+        <h1>Mini shop</h1>
+
+        <div class="card">
+          <div class="toolbar shop-toolbar">
+            <div class="field">
+              <label for="search">Search products</label>
+              <input type="search" id="search" data-testid="search" placeholder="e.g. keyboard">
+            </div>
+            <div class="field">
+              <label for="category">Category</label>
+              <select id="category" data-testid="category-filter">
+                <option value="">All categories</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="sort">Sort by</label>
+              <select id="sort" data-testid="sort">
+                <option value="relevance">Relevance</option>
+                <option value="price-asc">Price: low to high</option>
+                <option value="price-desc">Price: high to low</option>
+                <option value="name">Name: A to Z</option>
+                <option value="rating">Rating</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="max-price">Max price: <output id="max-price-output" data-testid="max-price-output">$200</output></label>
+              <input type="range" id="max-price" min="10" max="200" step="10" value="200">
+            </div>
+          </div>
+          <label class="inline-check"><input type="checkbox" id="in-stock" data-testid="in-stock"> In stock only</label>
+        </div>
+
+        <div id="shop-error" class="banner error" data-testid="shop-error" role="alert" hidden>
+          <span id="shop-error-text"></span> <button type="button" class="btn small" id="shop-retry">Retry</button>
+        </div>
+
+        <p id="result-count" data-testid="result-count" role="status" class="result-count">Loading products...</p>
+        <div id="product-grid" class="product-grid" data-testid="product-grid"></div>
+        <p id="no-results" class="card" data-testid="no-results" hidden>No products match your filters.</p>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Wait for the products to load and assert there are 12.</li>
+          <li>Search for "book", then filter by category "Books" and compare counts.</li>
+          <li>Sort by price and verify the order of the price texts.</li>
+          <li>Lower the max price slider and use "In stock only"; the USB-C Hub is out of stock.</li>
+          <li>Add a product to the cart and assert the header cart count and toast.</li>
+          <li>Open a product page from its card and add a quantity of 2.</li>
+          <li>Try to add the Smart Watch (stock 3) four times.</li>
+          <li>Use <code>?delay</code> / <code>?fail=true</code> and assert loading and error states with Retry.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

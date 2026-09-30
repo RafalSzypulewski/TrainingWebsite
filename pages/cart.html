@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cart - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/shop-common.js" defer></script>
+  <script src="../assets/js/cart.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div class="stack">
+        <h1>Your cart</h1>
+        <div id="cart-error" class="banner error" data-testid="cart-error" role="alert" hidden></div>
+        <p id="cart-loading" role="status">Loading cart...</p>
+        <p id="cart-message" data-testid="cart-message" role="status" class="error"></p>
+
+        <div id="cart-empty" class="card" data-testid="cart-empty" hidden>
+          <p>Your cart is empty.</p>
+          <a class="btn" href="shop.html">Continue shopping</a>
+        </div>
+
+        <div id="cart-content" hidden>
+          <div class="card table-card">
+            <div class="table-wrap">
+              <table class="data" data-testid="cart-table">
+                <caption class="sr-only">Cart items</caption>
+                <thead><tr><th scope="col">Product</th><th scope="col">Price</th><th scope="col">Quantity</th><th scope="col">Total</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+                <tbody id="cart-rows"></tbody>
+              </table>
+            </div>
+            <div class="actions"><button type="button" class="btn secondary small" id="clear-cart" data-testid="clear-cart">Clear cart</button></div>
+          </div>
+
+          <div class="card summary" aria-labelledby="h-summary">
+            <h2 id="h-summary">Order summary</h2>
+            <form id="promo-form" class="promo" novalidate>
+              <label for="promo-code">Promo code</label>
+              <div class="password-row">
+                <input type="text" id="promo-code" data-testid="promo-code" autocomplete="off">
+                <button type="submit" class="btn secondary" data-testid="promo-apply">Apply</button>
+              </div>
+              <p id="promo-message" data-testid="promo-message" role="status"></p>
+            </form>
+            <dl class="totals">
+              <dt>Subtotal</dt><dd data-testid="subtotal" id="subtotal"></dd>
+              <dt class="discount-row" id="discount-label" hidden>Discount</dt><dd id="discount" data-testid="discount" hidden></dd>
+              <dt>Shipping</dt><dd data-testid="shipping" id="shipping"></dd>
+              <dt class="grand">Total</dt><dd class="grand" data-testid="total" id="total"></dd>
+            </dl>
+            <p class="help">Free standard shipping on orders of $100.00 or more.</p>
+            <a class="btn" href="checkout.html" data-testid="checkout-link">Proceed to checkout</a>
+          </div>
+        </div>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Start with an empty cart and assert the empty state.</li>
+          <li>Add items in the shop, then assert rows, line totals and the order summary.</li>
+          <li>Increase and decrease quantities with the +/- buttons and the number input.</li>
+          <li>Try a quantity above the stock and assert the message.</li>
+          <li>Apply <code>SAVE10</code>, <code>FREESHIP</code>, and an invalid code; check the totals.</li>
+          <li>Verify shipping becomes free at $100.00 or more.</li>
+          <li>Remove one item, then clear the cart. Reload to confirm the cart persists.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

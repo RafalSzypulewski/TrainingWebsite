@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/shop-common.js" defer></script>
+  <script src="../assets/js/checkout.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div>
+        <h1>Checkout</h1>
+        <div id="checkout-summary-error" class="banner error" data-testid="form-summary" role="alert" hidden></div>
+        <div id="checkout-server-error" class="banner error" data-testid="checkout-error" role="alert" hidden></div>
+
+        <form id="checkout-form" class="card" data-testid="checkout-form" novalidate>
+          <h2>Shipping details</h2>
+          <div class="form-grid">
+            <div class="field">
+              <label for="fullName">Full name *</label>
+              <input type="text" id="fullName" name="fullName" data-testid="full-name" autocomplete="name">
+              <p class="error" id="fullName-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" data-testid="email" autocomplete="email">
+              <p class="error" id="email-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="address">Address *</label>
+              <input type="text" id="address" name="address" autocomplete="street-address">
+              <p class="error" id="address-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="city">City *</label>
+              <input type="text" id="city" name="city" autocomplete="address-level2">
+              <p class="error" id="city-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="zip">Postal code *</label>
+              <input type="text" id="zip" name="zip" data-testid="zip" autocomplete="postal-code">
+              <p class="error" id="zip-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="country">Country *</label>
+              <select id="country" name="country">
+                <option value="">-- Select --</option>
+                <option value="US">United States</option>
+                <option value="PL">Poland</option>
+                <option value="DE">Germany</option>
+              </select>
+              <p class="error" id="country-error" hidden></p>
+            </div>
+          </div>
+
+          <fieldset id="shipping-group">
+            <legend>Shipping method</legend>
+            <div class="inline">
+              <label><input type="radio" name="method" value="standard" checked data-testid="method-standard"> Standard (free over $100.00, otherwise $5.99)</label>
+            </div>
+            <div class="inline">
+              <label><input type="radio" name="method" value="express" data-testid="method-express"> Express ($9.99)</label>
+            </div>
+          </fieldset>
+
+          <h2>Payment</h2>
+          <p class="hint">Fake payment &mdash; use <code>4242 4242 4242 4242</code> to succeed or <code>4000 0000 0000 0002</code> to be declined. Any future expiry and any 3-digit CVC.</p>
+          <div class="form-grid">
+            <div class="field">
+              <label for="card">Card number *</label>
+              <input type="text" id="card" name="card" data-testid="card" inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242">
+              <p class="error" id="card-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="expiry">Expiry (MM/YY) *</label>
+              <input type="text" id="expiry" name="expiry" data-testid="expiry" autocomplete="cc-exp" placeholder="12/30">
+              <p class="error" id="expiry-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="cvc">CVC *</label>
+              <input type="text" id="cvc" name="cvc" data-testid="cvc" inputmode="numeric" autocomplete="cc-csc" maxlength="4">
+              <p class="error" id="cvc-error" hidden></p>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn" id="place-order" data-testid="place-order" disabled>Place order</button>
+            <span class="spinner" id="order-spinner" data-testid="order-spinner" role="progressbar" aria-label="Placing order" hidden></span>
+          </div>
+        </form>
+      </div>
+
+      <div class="stack">
+        <section class="card summary" aria-labelledby="h-co-summary">
+          <h2 id="h-co-summary">Order summary</h2>
+          <ul id="summary-items" class="summary-items" data-testid="summary-items"></ul>
+          <dl class="totals">
+            <dt>Subtotal</dt><dd data-testid="subtotal" id="subtotal"></dd>
+            <dt id="discount-label" hidden>Discount</dt><dd id="discount" data-testid="discount" hidden></dd>
+            <dt>Shipping</dt><dd data-testid="shipping" id="shipping"></dd>
+            <dt class="grand">Total</dt><dd class="grand" data-testid="total" id="total"></dd>
+          </dl>
+        </section>
+
+        <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+          <h2 id="ex-title">Exercises</h2>
+          <ol>
+            <li>Open checkout with an empty cart and assert the redirect to the cart.</li>
+            <li>Submit empty and assert every validation message.</li>
+            <li>Switch to Express shipping and assert the total changes.</li>
+            <li>Place an order with the success card; assert the confirmation page and cleared cart.</li>
+            <li>Use the decline card and assert the error while the cart is kept.</li>
+            <li>Use <code>?delay</code> / <code>?fail=true</code> to test the spinner and server error.</li>
+            <li>Build a full end-to-end purchase flow as a single test.</li>
+          </ol>
+        </aside>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

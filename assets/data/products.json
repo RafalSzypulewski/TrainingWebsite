@@ -1,0 +1,122 @@
+[
+ {
+  "id": 1,
+  "name": "Wireless Headphones",
+  "category": "Electronics",
+  "price": 7999,
+  "stock": 15,
+  "rating": 4.5,
+  "description": "Over-ear Bluetooth headphones with 30 hours of battery life.",
+  "image": "assets/img/electronics.svg"
+ },
+ {
+  "id": 2,
+  "name": "Mechanical Keyboard",
+  "category": "Electronics",
+  "price": 12900,
+  "stock": 8,
+  "rating": 4.7,
+  "description": "Tenkeyless keyboard with hot-swappable switches.",
+  "image": "assets/img/electronics.svg"
+ },
+ {
+  "id": 3,
+  "name": "USB-C Hub",
+  "category": "Electronics",
+  "price": 3450,
+  "stock": 0,
+  "rating": 4.1,
+  "description": "7-in-1 hub with HDMI, SD card reader and Ethernet.",
+  "image": "assets/img/electronics.svg"
+ },
+ {
+  "id": 4,
+  "name": "Smart Watch",
+  "category": "Electronics",
+  "price": 19999,
+  "stock": 3,
+  "rating": 4.3,
+  "description": "Fitness tracking, notifications and a week of battery.",
+  "image": "assets/img/electronics.svg"
+ },
+ {
+  "id": 5,
+  "name": "Clean Code",
+  "category": "Books",
+  "price": 3990,
+  "stock": 20,
+  "rating": 4.8,
+  "description": "A handbook of agile software craftsmanship.",
+  "image": "assets/img/books.svg"
+ },
+ {
+  "id": 6,
+  "name": "The Pragmatic Programmer",
+  "category": "Books",
+  "price": 4495,
+  "stock": 12,
+  "rating": 4.9,
+  "description": "Your journey to mastery, 20th anniversary edition.",
+  "image": "assets/img/books.svg"
+ },
+ {
+  "id": 7,
+  "name": "Learning TypeScript",
+  "category": "Books",
+  "price": 2999,
+  "stock": 25,
+  "rating": 4.4,
+  "description": "Enhance your JavaScript skills with static typing.",
+  "image": "assets/img/books.svg"
+ },
+ {
+  "id": 8,
+  "name": "Denim Jacket",
+  "category": "Clothing",
+  "price": 8900,
+  "stock": 6,
+  "rating": 4.2,
+  "description": "Classic fit jacket in washed blue denim.",
+  "image": "assets/img/clothing.svg"
+ },
+ {
+  "id": 9,
+  "name": "Cotton T-Shirt",
+  "category": "Clothing",
+  "price": 1999,
+  "stock": 50,
+  "rating": 4,
+  "description": "Soft organic cotton crew neck in white.",
+  "image": "assets/img/clothing.svg"
+ },
+ {
+  "id": 10,
+  "name": "Running Shoes",
+  "category": "Clothing",
+  "price": 10990,
+  "stock": 10,
+  "rating": 4.6,
+  "description": "Lightweight trainers with responsive cushioning.",
+  "image": "assets/img/clothing.svg"
+ },
+ {
+  "id": 11,
+  "name": "Desk Lamp",
+  "category": "Home",
+  "price": 2499,
+  "stock": 18,
+  "rating": 4.3,
+  "description": "Dimmable LED lamp with a flexible neck.",
+  "image": "assets/img/home.svg"
+ },
+ {
+  "id": 12,
+  "name": "Ceramic Mug",
+  "category": "Home",
+  "price": 1250,
+  "stock": 40,
+  "rating": 4.5,
+  "description": "Hand-glazed 350 ml mug, dishwasher safe.",
+  "image": "assets/img/home.svg"
+ }
+]

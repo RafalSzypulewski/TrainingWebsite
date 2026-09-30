@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Order confirmation - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/shop-common.js" defer></script>
+  <script src="../assets/js/confirmation.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div>
+        <div id="not-found" class="card" data-testid="order-not-found" hidden>
+          <h1>Order not found</h1>
+          <p>We couldn't find that order. <a href="shop.html">Back to the shop</a></p>
+        </div>
+
+        <div id="confirmation" class="card" data-testid="confirmation" hidden>
+          <h1 id="thanks" data-testid="thanks"></h1>
+          <p class="banner success" role="status">Your order has been placed. A confirmation was "sent" to <strong id="c-email"></strong>.</p>
+          <dl>
+            <dt>Order number</dt><dd data-testid="order-number" id="order-number"></dd>
+            <dt>Ship to</dt><dd id="c-address" data-testid="order-address"></dd>
+            <dt>Shipping method</dt><dd id="c-method"></dd>
+            <dt>Payment</dt><dd id="c-card"></dd>
+          </dl>
+          <h2>Items</h2>
+          <ul id="c-items" class="summary-items" data-testid="order-items"></ul>
+          <dl class="totals">
+            <dt>Subtotal</dt><dd id="c-subtotal"></dd>
+            <dt id="c-discount-label" hidden>Discount</dt><dd id="c-discount" hidden></dd>
+            <dt>Shipping</dt><dd id="c-shipping"></dd>
+            <dt class="grand">Total</dt><dd class="grand" data-testid="order-total" id="c-total"></dd>
+          </dl>
+          <a class="btn" href="shop.html">Continue shopping</a>
+        </div>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>After checkout, assert the order number, items and total match what you bought.</li>
+          <li>Reload the page: the order is read from <code>localStorage</code> and stays.</li>
+          <li>Open <code>confirmation.html?order=ORD-9999</code> and assert the "not found" state.</li>
+          <li>Place two orders and check the numbers increment.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
