@@ -27,10 +27,10 @@
     },
     shouldFail: () => params.get('fail') === 'true',
 
-    /** Fake request: waits, optionally fails, otherwise loads static JSON. */
-    async fetchJSON(path, { defaultDelay = 0 } = {}) {
+    /** Fake request: waits, optionally fails (unless respectFail is false), otherwise loads static JSON. */
+    async fetchJSON(path, { defaultDelay = 0, respectFail = true } = {}) {
       await PW.wait(PW.delay(defaultDelay));
-      if (PW.shouldFail()) throw new Error('Server error (500)');
+      if (respectFail && PW.shouldFail()) throw new Error('Server error (500)');
       const res = await fetch(PW.url(path));
       if (!res.ok) throw new Error(`Request failed (${res.status})`);
       return res.json();
@@ -96,6 +96,7 @@
     ['pages/windows.html', 'Windows'],
     ['pages/mouse.html', 'Mouse'],
     ['pages/downloads.html', 'Downloads'],
+    ['pages/shop.html', 'Shop'],
   ];
 
   function render() {

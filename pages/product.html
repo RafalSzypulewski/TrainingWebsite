@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Product - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/shop-common.js" defer></script>
+  <script src="../assets/js/product.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div>
+        <p><a href="shop.html" data-testid="back-to-shop">&larr; Back to shop</a></p>
+        <div id="product-error" class="banner error" data-testid="product-error" role="alert" hidden></div>
+        <p id="product-loading" role="status">Loading product...</p>
+
+        <article id="product" class="card product-detail" data-testid="product-detail" hidden>
+          <img id="p-image" src="" alt="" width="320" height="224">
+          <div>
+            <span class="badge" id="p-category"></span>
+            <h1 id="p-name" data-testid="product-name"></h1>
+            <p id="p-rating" class="rating"></p>
+            <p id="p-description"></p>
+            <p class="price big" id="p-price" data-testid="product-price"></p>
+            <p id="p-stock" data-testid="product-stock"></p>
+            <div class="field qty-field">
+              <label for="p-qty">Quantity</label>
+              <input type="number" id="p-qty" data-testid="product-qty" min="1" value="1">
+            </div>
+            <div class="actions">
+              <button type="button" class="btn" id="p-add" data-testid="product-add">Add to cart</button>
+              <a class="btn secondary" href="cart.html" id="p-go-cart" hidden>Go to cart</a>
+            </div>
+            <p id="p-message" data-testid="product-message" role="status"></p>
+          </div>
+        </article>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Open a product from the shop and assert name, price and stock.</li>
+          <li>Set the quantity to 2, add to cart and assert the cart count increases by 2.</li>
+          <li>Enter a quantity above the stock and assert the error message.</li>
+          <li>Open <code>product.html?id=999</code> and assert the "not found" message.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
