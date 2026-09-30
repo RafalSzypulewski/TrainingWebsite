@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tables - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/tables.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div>
+        <h1>Tables</h1>
+        <div class="card">
+          <div id="table-error" class="banner error" data-testid="table-error" role="alert" hidden></div>
+
+          <div class="toolbar">
+            <div class="field">
+              <label for="search">Search name or email</label>
+              <input type="search" id="search" data-testid="search" placeholder="e.g. alice">
+            </div>
+            <div class="field">
+              <label for="department">Department</label>
+              <select id="department" data-testid="department-filter">
+                <option value="">All departments</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="status">Status</label>
+              <select id="status">
+                <option value="">Any status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="page-size">Rows per page</label>
+              <select id="page-size" data-testid="page-size">
+                <option>5</option><option selected>10</option><option>25</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="toolbar-actions">
+            <button type="button" class="btn danger small" id="delete-selected" data-testid="delete-selected" disabled>Delete selected</button>
+            <span id="selected-count" data-testid="selected-count" role="status">0 selected</span>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data" id="employee-table" data-testid="employee-table">
+              <caption class="sr-only">Employees</caption>
+              <thead>
+                <tr>
+                  <th scope="col"><input type="checkbox" id="select-all" aria-label="Select all rows on this page" data-testid="select-all"></th>
+                  <th scope="col" aria-sort="none"><button type="button" class="sort-btn" data-sort="id">ID</button></th>
+                  <th scope="col" aria-sort="none"><button type="button" class="sort-btn" data-sort="name">Name</button></th>
+                  <th scope="col" aria-sort="none"><button type="button" class="sort-btn" data-sort="email">Email</button></th>
+                  <th scope="col" aria-sort="none"><button type="button" class="sort-btn" data-sort="department">Department</button></th>
+                  <th scope="col">Role</th>
+                  <th scope="col" aria-sort="none"><button type="button" class="sort-btn" data-sort="salary">Salary</button></th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+
+          <div class="pager">
+            <p id="range-info" data-testid="range-info" role="status">Loading...</p>
+            <nav aria-label="Pagination" id="pagination"></nav>
+          </div>
+        </div>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Assert the first page shows 10 of 45 rows.</li>
+          <li>Sort by Name ascending, then descending; assert order and <code>aria-sort</code>.</li>
+          <li>Sort by Salary and assert the column is numerically ordered.</li>
+          <li>Search for "alice" and assert every row matches; clear it again.</li>
+          <li>Combine the department and status filters; assert the range text.</li>
+          <li>Change rows per page, go to the last page with Next, and check that Next is disabled.</li>
+          <li>Find "Carol Davis" by text and click Edit, rename her, and Save.</li>
+          <li>Delete a row (with the inline confirmation) and reload: the change persists. Then use Reset data.</li>
+          <li>Select all rows on a page and delete them in bulk.</li>
+          <li>Toggle a status without using a test id (hint: the button's accessible name).</li>
+          <li>Search for something that doesn't exist and assert the empty state.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,27 @@
+[
+ {
+  "id": 1,
+  "text": "Tests are the safety net that lets you jump higher.",
+  "author": "Ada"
+ },
+ {
+  "id": 2,
+  "text": "If it is not automated, it is not done.",
+  "author": "Linus"
+ },
+ {
+  "id": 3,
+  "text": "Flaky tests are just tests with opinions.",
+  "author": "Grace"
+ },
+ {
+  "id": 4,
+  "text": "Wait for the condition, never for the clock.",
+  "author": "Alan"
+ },
+ {
+  "id": 5,
+  "text": "Locate by role first, test id second, CSS last.",
+  "author": "Margaret"
+ }
+]

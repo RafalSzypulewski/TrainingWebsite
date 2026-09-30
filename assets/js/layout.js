@@ -90,6 +90,8 @@
     ['pages/login.html', 'Login'],
     ['pages/dashboard.html', 'Dashboard'],
     ['pages/forms.html', 'Forms'],
+    ['pages/dynamic.html', 'Dynamic'],
+    ['pages/tables.html', 'Tables'],
   ];
 
   function render() {
