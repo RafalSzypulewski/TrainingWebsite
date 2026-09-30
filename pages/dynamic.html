@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dynamic content - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/layout.js" defer></script>
+  <script src="../assets/js/dynamic.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div class="stack">
+        <h1>Dynamic content</h1>
+
+        <section class="card" aria-labelledby="h-load">
+          <h2 id="h-load">1. Loading data</h2>
+          <p class="help">Fetches quotes from static JSON (default latency 1500 ms).</p>
+          <div class="actions">
+            <button type="button" class="btn" id="load-btn" data-testid="load-btn">Load quotes</button>
+            <span class="spinner" id="load-spinner" data-testid="load-spinner" role="progressbar" aria-label="Loading quotes" hidden></span>
+          </div>
+          <div id="load-error" class="banner error" data-testid="load-error" role="alert" hidden>
+            <span id="load-error-text"></span> <button type="button" class="btn small" id="retry-btn">Retry</button>
+          </div>
+          <p id="load-status" data-testid="load-status" role="status"></p>
+          <ul id="quotes" data-testid="quotes"></ul>
+        </section>
+
+        <section class="card" aria-labelledby="h-appear">
+          <h2 id="h-appear">2. Appearing and disappearing elements</h2>
+          <div class="actions">
+            <button type="button" class="btn" id="delayed-btn" data-testid="delayed-btn">Show message after delay</button>
+            <button type="button" class="btn secondary" id="temp-btn">Show temporary banner</button>
+          </div>
+          <div id="delayed-slot" aria-live="polite"></div>
+          <div id="temp-slot" aria-live="polite"></div>
+
+          <hr>
+          <div class="actions">
+            <button type="button" class="btn secondary" id="remove-btn" data-testid="remove-btn">Remove box</button>
+            <button type="button" class="btn secondary" id="hide-btn" data-testid="hide-btn">Hide box</button>
+          </div>
+          <div id="box-slot"><div id="box" class="box" data-testid="box">I am a box. Remove me from the DOM, or just hide me.</div></div>
+        </section>
+
+        <section class="card" aria-labelledby="h-enable">
+          <h2 id="h-enable">3. Delayed enable</h2>
+          <div class="field">
+            <label for="delayed-input">Type here once enabled</label>
+            <input type="text" id="delayed-input" data-testid="delayed-input" disabled>
+          </div>
+          <button type="button" class="btn" id="enable-btn">Enable input</button>
+          <span id="enable-status" role="status" class="help"></span>
+        </section>
+
+        <section class="card" aria-labelledby="h-progress">
+          <h2 id="h-progress">4. Progress bar</h2>
+          <p class="help">Default duration 3000 ms (<code>?delay</code> changes it).</p>
+          <div class="progress" role="progressbar" aria-label="Task progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress" data-testid="progress">
+            <div class="progress-bar" id="progress-bar"></div>
+          </div>
+          <p id="progress-text" data-testid="progress-text" role="status">0%</p>
+          <button type="button" class="btn" id="progress-btn">Start task</button>
+        </section>
+
+        <section class="card" aria-labelledby="h-scroll">
+          <h2 id="h-scroll">5. Infinite scroll</h2>
+          <p class="help" data-testid="scroll-count" id="scroll-count" role="status">Showing 0 of 60</p>
+          <div id="scroll-box" class="scroll-box" data-testid="scroll-box" tabindex="0" role="region" aria-label="Scrollable item list">
+            <ul id="scroll-list" data-testid="scroll-list"></ul>
+            <div id="sentinel" class="sentinel"><span class="spinner" id="scroll-spinner" aria-label="Loading more" hidden></span><span id="scroll-end" data-testid="scroll-end" hidden>No more items</span></div>
+          </div>
+          <p id="scroll-error" class="banner error" data-testid="scroll-error" role="alert" hidden></p>
+        </section>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Click "Load quotes"; assert the spinner shows, then 5 quotes. Try <code>?fail=true</code> and click Retry.</li>
+          <li>Wait for the delayed message without a fixed sleep.</li>
+          <li>Show the temporary banner and assert it disappears by itself.</li>
+          <li>Remove the box (gone from the DOM) and re-add it; compare with hide (still in the DOM).</li>
+          <li>Wait for the input to become enabled, then type into it.</li>
+          <li>Start the task and wait for the progress bar to hit 100 (<code>aria-valuenow</code>).</li>
+          <li>Scroll the list until "No more items" and assert all 60 items loaded.</li>
+          <li>Speed everything up with <code>?delay=200</code>.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

@@ -49,7 +49,8 @@ The footer **Reset data** button clears local/session storage and cookies, then 
 | `pages/login.html` | done | Valid/invalid login, empty validation, locked user, remember me (storage), spinner via `?delay`, error via `?fail`, protected-page redirect |
 | `pages/dashboard.html` | done | Protected page, role-based panel, logout |
 | `pages/forms.html` | done | All input types, validation messages, range/counter, single + multiple file upload, native HTML5 validation |
-| Dynamic content, Tables | planned (step 2) | |
+| `pages/dynamic.html` | done | Loading spinners, delayed/disappearing elements, delayed enable, progress bar, infinite scroll |
+| `pages/tables.html` | done | Sort, search, filters, pagination, inline edit, delete with confirmation, bulk delete, persisted changes |
 | Alerts, Windows & frames, Mouse & keyboard, Downloads | planned (step 3) | |
 | Mini shop | planned (step 4) | |
 | Network, Accessibility, Responsive, Tricky | planned (step 5) | |
