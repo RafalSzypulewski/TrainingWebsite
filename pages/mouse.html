@@ -92,7 +92,11 @@
             <label for="quick-add">Quick add (Enter adds, Escape clears)</label>
             <input type="text" id="quick-add" data-testid="quick-add" autocomplete="off">
           </div>
-          <ul id="quick-list" data-testid="quick-list"></ul>
+          <ul id="quick-list" class="plain-list" data-testid="quick-list"></ul>
+          <div class="actions">
+            <button type="button" class="btn danger small" id="quick-remove" data-testid="quick-remove" disabled>Remove selected</button>
+            <span id="quick-status" data-testid="quick-status" role="status">No items yet.</span>
+          </div>
         </section>
       </div>
 
@@ -107,6 +111,7 @@
           <li>Set the slider to 80 using the keyboard and then with the mouse.</li>
           <li>Type in the key input and assert <code>key</code> and <code>code</code> for letters, Enter, arrows and modifiers.</li>
           <li>Trigger the Ctrl+K shortcut. Add items with Enter, clear with Escape.</li>
+          <li>Tick some of the added items and remove them with "Remove selected"; assert the list and the status text.</li>
         </ol>
       </aside>
     </div>

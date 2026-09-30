@@ -106,14 +106,38 @@
     }
   });
   const quick = $('quick-add');
+  const quickList = $('quick-list');
+  const plural = (n) => `${n} item${n === 1 ? '' : 's'}`;
+
+  function updateQuickStatus(message) {
+    const total = quickList.children.length;
+    const selected = quickList.querySelectorAll('input:checked').length;
+    $('quick-remove').disabled = selected === 0;
+    const summary = total === 0 ? 'No items yet.' : `${plural(total)}, ${selected} selected`;
+    $('quick-status').textContent = message ? `${message} ${summary}` : summary;
+  }
+
   quick.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && quick.value.trim()) {
       const li = document.createElement('li');
-      li.textContent = quick.value.trim();
-      $('quick-list').append(li);
+      const label = document.createElement('label');
+      const box = document.createElement('input');
+      const text = document.createElement('span');
+      box.type = 'checkbox';
+      text.textContent = quick.value.trim();
+      label.append(box, ' ', text);
+      li.append(label);
+      quickList.append(li);
       quick.value = '';
+      updateQuickStatus();
     } else if (e.key === 'Escape') {
       quick.value = '';
     }
+  });
+  quickList.addEventListener('change', () => updateQuickStatus());
+  $('quick-remove').addEventListener('click', () => {
+    const checked = [...quickList.querySelectorAll('input:checked')];
+    checked.forEach((box) => box.closest('li').remove());
+    updateQuickStatus(`Removed ${plural(checked.length)}.`);
   });
 })();

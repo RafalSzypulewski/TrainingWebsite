@@ -119,6 +119,58 @@ test.describe('Mouse and keyboard', () => {
     await expect(page.getByTestId('shortcut-status')).toHaveText('Shortcut Ctrl+K triggered!');
   });
 
+  test('quick add: select and remove items', async ({ page }) => {
+    const input = page.getByTestId('quick-add');
+    const items = page.getByTestId('quick-list').getByRole('listitem');
+    const remove = page.getByTestId('quick-remove');
+    const status = page.getByTestId('quick-status');
+
+    await expect(status).toHaveText('No items yet.');
+    await expect(remove).toBeDisabled();
+
+    for (const name of ['alpha', 'beta', 'gamma', 'delta']) {
+      await input.fill(name);
+      await input.press('Enter');
+    }
+    await expect(items).toHaveCount(4);
+    await expect(status).toHaveText('4 items, 0 selected');
+    await expect(remove).toBeDisabled();
+
+    await page.getByRole('checkbox', { name: 'beta' }).check();
+    await page.getByRole('checkbox', { name: 'delta' }).check();
+    await expect(status).toHaveText('4 items, 2 selected');
+    await expect(remove).toBeEnabled();
+
+    await remove.click();
+    await expect(items).toHaveText(['alpha', 'gamma']);
+    await expect(status).toHaveText('Removed 2 items. 2 items, 0 selected');
+    await expect(remove).toBeDisabled();
+
+    // Unticking before removing leaves the item alone; removing the last one empties the list.
+    await page.getByRole('checkbox', { name: 'alpha' }).check();
+    await page.getByRole('checkbox', { name: 'alpha' }).uncheck();
+    await expect(remove).toBeDisabled();
+    await page.getByRole('checkbox', { name: 'alpha' }).check();
+    await page.getByRole('checkbox', { name: 'gamma' }).check();
+    await remove.click();
+    await expect(items).toHaveCount(0);
+    await expect(status).toHaveText('Removed 2 items. No items yet.');
+  });
+
+  test('quick add: removing one item keeps the singular wording and new items still work', async ({ page }) => {
+    const input = page.getByTestId('quick-add');
+    await input.fill('only');
+    await input.press('Enter');
+    await expect(page.getByTestId('quick-status')).toHaveText('1 item, 0 selected');
+    await page.getByRole('checkbox', { name: 'only' }).check();
+    await page.getByTestId('quick-remove').click();
+    await expect(page.getByTestId('quick-status')).toHaveText('Removed 1 item. No items yet.');
+
+    await input.fill('again');
+    await input.press('Enter');
+    await expect(page.getByTestId('quick-list').getByRole('listitem')).toHaveText(['again']);
+  });
+
   test('quick add: Enter adds, Escape clears', async ({ page }) => {
     const input = page.getByTestId('quick-add');
     await input.fill('first');
