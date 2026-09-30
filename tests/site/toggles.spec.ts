@@ -1,5 +1,5 @@
-import { test, expect } from './fixtures';
-import { USERS } from './helpers';
+import { test, expect } from '../support/fixtures';
+import { USERS } from '../support/helpers';
 
 test.describe('Toggle panel', () => {
   test('is collapsed by default and opens from its summary', async ({ page }) => {

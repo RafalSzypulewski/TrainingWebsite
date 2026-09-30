@@ -42,7 +42,7 @@
     submit.disabled = true;
     spinner.hidden = false;
     try {
-      const users = await PW.fetchJSON('assets/data/users.json', { defaultDelay: 500 });
+      const users = await PW.fetchJSON('assets/data/login-users.json', { defaultDelay: 500 });
       const user = users.find((u) => u.username === username && u.password === password);
       if (!user) throw new Error('Invalid username or password');
       if (user.locked) throw new Error('This account is locked. Contact support.');

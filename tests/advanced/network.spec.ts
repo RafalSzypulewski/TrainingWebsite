@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect } from '../support/fixtures';
 import type { Route } from '@playwright/test';
 
 const USERS = '**/assets/data/api/users.json*';

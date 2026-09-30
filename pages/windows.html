@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Windows and frames - PW Practice Lab</title>
   <link rel="stylesheet" href="../assets/css/styles.css">
-  <script src="../assets/js/layout.js" defer></script>
-  <script src="../assets/js/windows.js" defer></script>
+  <script src="../assets/js/core/layout.js" defer></script>
+  <script src="../assets/js/pages/windows.js" defer></script>
 </head>
 <body>
   <main>
@@ -26,12 +26,12 @@
         <section class="card" aria-labelledby="h-frame">
           <h2 id="h-frame">2. Iframe</h2>
           <p data-testid="outside-frame-text">This text is outside the frame.</p>
-          <iframe src="frames/frame-simple.html" title="Simple frame" name="simple-frame" id="simple-frame" data-testid="simple-frame" height="220"></iframe>
+          <iframe src="frames/simple.html" title="Simple frame" name="simple-frame" id="simple-frame" data-testid="simple-frame" height="220"></iframe>
         </section>
 
         <section class="card" aria-labelledby="h-nested">
           <h2 id="h-nested">3. Nested iframes</h2>
-          <iframe src="frames/frame-outer.html" title="Outer frame" name="outer-frame" data-testid="outer-frame" height="340"></iframe>
+          <iframe src="frames/outer.html" title="Outer frame" name="outer-frame" data-testid="outer-frame" height="340"></iframe>
         </section>
 
         <section class="card" aria-labelledby="h-srcdoc">

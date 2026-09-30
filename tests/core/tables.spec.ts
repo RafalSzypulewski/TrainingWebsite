@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect } from '../support/fixtures';
 import type { Page } from '@playwright/test';
 
 const rows = (page: Page) => page.getByTestId('employee-table').locator('tbody tr');

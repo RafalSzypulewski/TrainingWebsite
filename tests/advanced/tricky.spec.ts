@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect } from '../support/fixtures';
 
 const status = (page: import('@playwright/test').Page) => page.getByTestId('tricky-status');
 

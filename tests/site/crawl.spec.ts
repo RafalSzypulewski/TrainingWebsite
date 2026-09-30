@@ -1,5 +1,5 @@
-import { test, expect } from './fixtures';
-import { crawl, findBroken } from './crawler';
+import { test, expect } from '../support/fixtures';
+import { crawl, findBroken } from '../support/crawler';
 
 /**
  * Crawls the site in a real browser (so links and images created by JavaScript count too),

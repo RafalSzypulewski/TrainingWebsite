@@ -1,7 +1,7 @@
 /*
  * Shared layout + fake-backend helpers.
- * Include on every page:  <script src="../assets/js/layout.js" defer></script>
- * (use "assets/js/layout.js" on index.html). Site root is derived from this script's URL,
+ * Include on every page:  <script src="../assets/js/core/layout.js" defer></script>
+ * (use "assets/js/core/layout.js" on index.html). Site root is derived from this script's URL,
  * so the site works from any sub-path (e.g. https://user.github.io/repo-name/).
  *
  * Query-param toggles (work on every page):
@@ -9,7 +9,7 @@
  *   ?fail=true    fake requests fail with a server error
  */
 (function () {
-  const root = new URL('../../', document.currentScript.src);
+  const root = new URL('../../../', document.currentScript.src);
   const params = new URLSearchParams(location.search);
   const SESSION_KEY = 'pw_session';
   const COOKIE = 'pw_session';

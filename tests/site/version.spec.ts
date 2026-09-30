@@ -1,9 +1,9 @@
-import { test, expect } from './fixtures';
+import { test, expect } from '../support/fixtures';
 import type { Page } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '..', '..');
 const readJSON = (file: string) => JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
 
 async function expectVersionFooter(page: Page, url: string) {

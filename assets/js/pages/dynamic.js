@@ -107,7 +107,7 @@
     $('scroll-spinner').hidden = false;
     $('scroll-error').hidden = true;
     try {
-      if (!items) items = await PW.fetchJSON('assets/data/items.json');
+      if (!items) items = await PW.fetchJSON('assets/data/scroll-items.json');
       await PW.wait(PW.delay(600));
       items.slice(shown, shown + BATCH).forEach((it) => {
         const li = document.createElement('li');

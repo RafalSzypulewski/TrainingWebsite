@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect } from '../support/fixtures';
 
 test.describe('Dynamic content', () => {
   test('loading quotes shows a spinner, then 5 quotes', { tag: '@smoke' }, async ({ page }) => {

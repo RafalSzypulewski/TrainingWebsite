@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect } from '../support/fixtures';
 
 test.describe('Main navigation', () => {
   test('groups open on click and close on Escape or outside click', async ({ page }) => {

@@ -1,5 +1,5 @@
-import { test, expect } from './fixtures';
-import { seedCart } from './helpers';
+import { test, expect } from '../support/fixtures';
+import { seedCart } from '../support/helpers';
 
 test.describe('Cart', () => {
   test('empty cart shows the empty state', async ({ page }) => {

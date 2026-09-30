@@ -1,5 +1,5 @@
-import { test, expect } from './fixtures';
-import { USERS, login } from './helpers';
+import { test, expect } from '../support/fixtures';
+import { USERS, login } from '../support/helpers';
 
 test.describe('Login', () => {
   test('valid credentials land on the dashboard', { tag: '@smoke' }, async ({ page }) => {

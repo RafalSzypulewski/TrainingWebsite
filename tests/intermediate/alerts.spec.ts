@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect } from '../support/fixtures';
 
 test.describe('Alerts and dialogs', () => {
   test.beforeEach(async ({ page }) => {

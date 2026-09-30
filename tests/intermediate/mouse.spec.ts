@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect } from '../support/fixtures';
 
 test.describe('Mouse and keyboard', () => {
   test.beforeEach(async ({ page }) => {

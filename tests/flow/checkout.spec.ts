@@ -1,5 +1,5 @@
-import { test, expect } from './fixtures';
-import { seedCart, fillCheckout } from './helpers';
+import { test, expect } from '../support/fixtures';
+import { seedCart, fillCheckout } from '../support/helpers';
 
 test.describe('Checkout', () => {
   test('redirects to the cart when it is empty', async ({ page }) => {

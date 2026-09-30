@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect } from '../support/fixtures';
 
 test.describe('Windows and frames', () => {
   test.beforeEach(async ({ page }) => {
@@ -56,7 +56,7 @@ test.describe('Windows and frames', () => {
     const frame = page.frame({ name: 'simple-frame' });
     expect(frame).not.toBeNull();
     await expect(frame!.locator('h2')).toHaveText('Inside the simple frame');
-    expect(page.frame({ name: 'inner-frame' })?.url()).toContain('frame-inner.html');
+    expect(page.frame({ name: 'inner-frame' })?.url()).toContain('frames/inner.html');
   });
 
   test('srcdoc iframe', async ({ page }) => {

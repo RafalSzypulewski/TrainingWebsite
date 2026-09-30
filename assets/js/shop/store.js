@@ -1,6 +1,6 @@
 /*
  * Shared shop logic: cart in localStorage, promo codes, totals, header cart link, toasts.
- * All money is handled in integer cents. Load after layout.js.
+ * All money is handled in integer cents. Load after core/layout.js.
  */
 (function () {
   const CART = 'pw_cart';

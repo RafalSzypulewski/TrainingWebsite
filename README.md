@@ -35,7 +35,7 @@ Playwright actions such as `locator.click()` without `await`.
 
 ### Console-error guard
 
-Specs import `test` and `expect` from `tests/fixtures.ts`, not from `@playwright/test`. The fixture fails any test
+Specs import `test` and `expect` from `tests/support/fixtures.ts`, not from `@playwright/test`. The fixture fails any test
 in which a page logs a `console.error` or throws an uncaught exception, so silent JavaScript bugs show up as test
 failures. Tests that provoke errors on purpose (mocked 500s, aborted requests) must allow them, narrowly:
 
@@ -48,7 +48,7 @@ test.use({ allowedConsoleErrors: [/Failed to load resource.*users\.json/] });
 - `npm run test:smoke` runs the 11 tests tagged `@smoke` (about 10 seconds). Tag a test with
   `test('name', { tag: '@smoke' }, async ({ page }) => { ... })`.
 - The Pages workflow runs the smoke set against the site right after every deploy.
-- `tests/crawl.spec.ts` crawls the site and requests every internal link, image, script, stylesheet and frame.
+- `tests/site/crawl.spec.ts` crawls the site and requests every internal link, image, script, stylesheet and frame.
   Run against the live site it catches files that exist in the repo but were never published.
 - `.github/workflows/nightly.yml` runs the whole suite three times against the live site every night at 03:17 UTC
   (also on demand from the Actions tab). A test that only passes on retry is reported as a flaky warning.
