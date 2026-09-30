@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Main navigation', () => {
   test('groups open on click and close on Escape or outside click', async ({ page }) => {
@@ -56,7 +56,7 @@ test.describe('Main navigation', () => {
     await page.goto('index.html');
     const nav = page.getByRole('navigation', { name: 'Main' });
     const hrefs = await nav.locator('a').evaluateAll((links) => links.map((a) => (a as HTMLAnchorElement).href));
-    expect(hrefs.length).toBe(15);
+    expect(hrefs).toHaveLength(15);
     for (const href of hrefs) {
       const response = await page.request.get(href);
       expect(response.ok(), href).toBe(true);

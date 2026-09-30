@@ -1,4 +1,5 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from './fixtures';
+import type { Page } from '@playwright/test';
 
 const rows = (page: Page) => page.getByTestId('employee-table').locator('tbody tr');
 const column = (page: Page, index: number) => rows(page).locator(`td:nth-child(${index})`).allTextContents();

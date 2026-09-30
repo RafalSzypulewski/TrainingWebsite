@@ -22,6 +22,27 @@ npm start        # http://localhost:4173
 npm test         # starts the server itself and runs all specs
 ```
 
+## Quality checks
+
+```bash
+npm run typecheck   # tsc --noEmit over tests/ (strict)
+npm run lint        # ESLint: Playwright rules for tests, recommended rules for the site scripts
+npm run check       # both
+```
+
+CI runs both before the tests. Lint includes `@typescript-eslint/no-floating-promises`, which flags un-awaited
+Playwright actions such as `locator.click()` without `await`.
+
+### Console-error guard
+
+Specs import `test` and `expect` from `tests/fixtures.ts`, not from `@playwright/test`. The fixture fails any test
+in which a page logs a `console.error` or throws an uncaught exception, so silent JavaScript bugs show up as test
+failures. Tests that provoke errors on purpose (mocked 500s, aborted requests) must allow them, narrowly:
+
+```ts
+test.use({ allowedConsoleErrors: [/Failed to load resource.*users\.json/] });
+```
+
 ## Deploy (GitHub Pages)
 
 1. Push to `main` on GitHub.

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Windows and frames', () => {
   test.beforeEach(async ({ page }) => {

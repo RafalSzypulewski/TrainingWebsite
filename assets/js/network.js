@@ -13,7 +13,7 @@
       res = await fetch(PW.url(path), { cache: 'no-store', ...options });
     } catch (err) {
       if (err.name === 'AbortError') throw err;
-      throw new Error('Network error: could not reach the server');
+      throw new Error('Network error: could not reach the server', { cause: err });
     }
     if (!res.ok) throw new Error(`Server responded with ${res.status}`);
     try {
