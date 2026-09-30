@@ -1,10 +1,14 @@
-import { test, expect, type Route } from '@playwright/test';
+import { test, expect } from './fixtures';
+import type { Route } from '@playwright/test';
 
 const USERS = '**/assets/data/api/users.json*';
 const json = (route: Route, body: unknown, status = 200) =>
   route.fulfill({ status, contentType: 'application/json', body: JSON.stringify(body) });
 
 test.describe('Network: users list', () => {
+  // These tests mock failures on purpose, and the browser logs each failed request.
+  test.use({ allowedConsoleErrors: [/Failed to load resource.*assets\/data\/api\/users\.json/] });
+
   test.beforeEach(async ({ page }) => {
     await page.goto('pages/network.html');
   });
@@ -82,6 +86,8 @@ test.describe('Network: users list', () => {
 });
 
 test.describe('Network: timeout, retries and polling', () => {
+  test.use({ allowedConsoleErrors: [/Failed to load resource.*assets\/data\/api\/(flaky|status)\.json/] });
+
   test('slow request times out', async ({ page }) => {
     await page.route('**/assets/data/api/slow.json', async (route) => {
       await new Promise((r) => setTimeout(r, 1500));
@@ -156,6 +162,8 @@ test.describe('Network: timeout, retries and polling', () => {
 });
 
 test.describe('Network: POST feedback', () => {
+  test.use({ allowedConsoleErrors: [/Failed to load resource.*\/api\/feedback/] });
+
   test.beforeEach(async ({ page }) => {
     await page.goto('pages/network.html');
   });

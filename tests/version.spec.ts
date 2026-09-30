@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -20,11 +20,15 @@ test.describe('Site version', () => {
     });
   }
 
-  test('the page still works when version info is unavailable', async ({ page }) => {
-    await page.route('**/assets/data/version.json*', (route) => route.fulfill({ status: 404 }));
-    await page.goto('index.html');
-    await expect(page.getByTestId('site-version')).toBeHidden();
-    await expect(page.getByTestId('reset-data')).toBeVisible();
+  test.describe('without version info', () => {
+    test.use({ allowedConsoleErrors: [/Failed to load resource.*version\.json/] });
+
+    test('the page still works when version info is unavailable', async ({ page }) => {
+      await page.route('**/assets/data/version.json*', (route) => route.fulfill({ status: 404 }));
+      await page.goto('index.html');
+      await expect(page.getByTestId('site-version')).toBeHidden();
+      await expect(page.getByTestId('reset-data')).toBeVisible();
+    });
   });
 
   test('commit and build date are shown when present', async ({ page }) => {

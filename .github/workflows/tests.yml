@@ -20,6 +20,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Static checks first: they fail in seconds, before browsers are downloaded.
+      - run: npm run typecheck
+      - run: npm run lint
       - run: npx playwright install --with-deps chromium
       - run: npm test
         env:

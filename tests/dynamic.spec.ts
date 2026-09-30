@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Dynamic content', () => {
   test('loading quotes shows a spinner, then 5 quotes', async ({ page }) => {

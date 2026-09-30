@@ -1,4 +1,5 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from './fixtures';
+import type { Page } from '@playwright/test';
 
 const cards = (page: Page) => page.getByTestId('product-grid').locator('article');
 const prices = async (page: Page) =>
