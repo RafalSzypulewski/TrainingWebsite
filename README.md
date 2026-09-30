@@ -1,8 +1,17 @@
 # PW Practice Lab
 
+**Live site: https://rafalszypulewski.github.io/TrainingWebsite/**
+
 A static, backend-free website for practicing test automation with Playwright.
 Plain HTML/CSS/vanilla JS, no build step. State lives in `localStorage`, `sessionStorage`
 and cookies; "server" data is static JSON in `assets/data/` loaded via `fetch()`.
+
+## Versioning
+
+The site version lives in `assets/data/version.json` (keep it in sync with `package.json`). The footer of every
+page shows it, for example `v1.0.0`. On the deployed site the Pages workflow also stamps the short commit SHA and
+the build date, so the footer reads like `v1.0.0 · b5dc956 · built 2026-09-30`. Bump the version when you add or
+change pages.
 
 ## Run locally
 
