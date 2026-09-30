@@ -149,10 +149,53 @@
       <div class="container">
         <p>Practice site for test automation. All data is fake and stored in your browser only.<br>
           <span class="version" data-testid="site-version" hidden></span></p>
-        <button type="button" class="btn secondary small" data-testid="reset-data">Reset data</button>
+        <div class="footer-actions">
+          <details class="toggle-panel" data-testid="toggle-panel"${toggles.length ? ' open' : ''}>
+            <summary>Test toggles</summary>
+            <form class="toggle-form" novalidate>
+              <label>Delay (ms) <input type="number" min="0" step="100" inputmode="numeric" data-testid="toggle-delay"></label>
+              <label><input type="checkbox" data-testid="toggle-fail"> Fail requests</label>
+              <button type="submit" class="btn small" data-testid="toggle-apply">Apply toggles</button>
+              <button type="button" class="btn secondary small" data-testid="toggle-clear">Clear toggles</button>
+              <span class="toggle-error" role="alert" data-testid="toggle-error" hidden></span>
+            </form>
+          </details>
+          <button type="button" class="btn secondary small" data-testid="reset-data">Reset data</button>
+        </div>
       </div>`;
     document.body.append(footer);
-    footer.querySelector('button').addEventListener('click', PW.resetData);
+    footer.querySelector('[data-testid="reset-data"]').addEventListener('click', PW.resetData);
+
+    // Toggle panel: edits ?delay and ?fail in the URL (other query parameters are kept) and reloads.
+    const toggleForm = footer.querySelector('.toggle-form');
+    const delayInput = toggleForm.querySelector('[data-testid="toggle-delay"]');
+    const failInput = toggleForm.querySelector('[data-testid="toggle-fail"]');
+    const toggleError = toggleForm.querySelector('[data-testid="toggle-error"]');
+    delayInput.value = params.get('delay') ?? '';
+    failInput.checked = params.get('fail') === 'true';
+    const navigateWith = (change) => {
+      const url = new URL(location.href);
+      change(url.searchParams);
+      location.href = url.href;
+    };
+    toggleForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const raw = delayInput.value.trim();
+      const delay = Number(raw);
+      if (raw !== '' && !(Number.isInteger(delay) && delay >= 0)) {
+        toggleError.textContent = 'Delay must be a whole number of milliseconds (0 or more).';
+        toggleError.hidden = false;
+        delayInput.setAttribute('aria-invalid', 'true');
+        return;
+      }
+      navigateWith((q) => {
+        if (raw === '') q.delete('delay'); else q.set('delay', String(delay));
+        if (failInput.checked) q.set('fail', 'true'); else q.delete('fail');
+      });
+    });
+    toggleForm.querySelector('[data-testid="toggle-clear"]').addEventListener('click', () => {
+      navigateWith((q) => { q.delete('delay'); q.delete('fail'); });
+    });
 
     // Version comes from assets/data/version.json; the deploy workflow adds the commit and build date.
     fetch(PW.url('assets/data/version.json'), { cache: 'no-cache' })

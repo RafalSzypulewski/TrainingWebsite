@@ -1,0 +1,55 @@
+name: Nightly live-site check
+
+# Runs the whole suite against the deployed GitHub Pages site every night, three times over.
+# - catches regressions that only exist after publishing (for example a file the deploy forgot to copy)
+# - shows flaky tests: a test that only passes on retry is reported as a warning annotation
+# Note: GitHub pauses scheduled workflows after 60 days without repository activity.
+
+on:
+  schedule:
+    - cron: '17 3 * * *' # 03:17 UTC every day
+  workflow_dispatch:
+    inputs:
+      repeat:
+        description: 'How many times to run every test (flakiness check)'
+        required: false
+        default: '3'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+jobs:
+  live-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+
+      - name: Work out the live URL
+        id: site
+        run: |
+          owner="${GITHUB_REPOSITORY_OWNER,,}"   # github.io host names are lower case
+          repo="${GITHUB_REPOSITORY#*/}"
+          echo "url=https://${owner}.github.io/${repo}/" >> "$GITHUB_OUTPUT"
+
+      - name: Run the full suite against the live site
+        env:
+          BASE_URL: ${{ steps.site.outputs.url }}
+        run: npx playwright test -c tests/playwright.config.ts --repeat-each=${{ inputs.repeat || '3' }}
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: nightly-playwright-report
+          path: playwright-report/
+          retention-days: 14

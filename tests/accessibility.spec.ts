@@ -6,7 +6,7 @@ test.describe('Accessibility page', () => {
     await page.goto('pages/accessibility.html');
   });
 
-  test('axe finds no violations in the good section', async ({ page }) => {
+  test('axe finds no violations in the good section', { tag: '@smoke' }, async ({ page }) => {
     const results = await new AxeBuilder({ page }).include('#good').analyze();
     expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(', ')}`)).toEqual([]);
   });

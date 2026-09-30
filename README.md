@@ -43,6 +43,17 @@ failures. Tests that provoke errors on purpose (mocked 500s, aborted requests) m
 test.use({ allowedConsoleErrors: [/Failed to load resource.*users\.json/] });
 ```
 
+## Smoke tests, crawl and nightly run
+
+- `npm run test:smoke` runs the 11 tests tagged `@smoke` (about 10 seconds). Tag a test with
+  `test('name', { tag: '@smoke' }, async ({ page }) => { ... })`.
+- The Pages workflow runs the smoke set against the site right after every deploy.
+- `tests/crawl.spec.ts` crawls the site and requests every internal link, image, script, stylesheet and frame.
+  Run against the live site it catches files that exist in the repo but were never published.
+- `.github/workflows/nightly.yml` runs the whole suite three times against the live site every night at 03:17 UTC
+  (also on demand from the Actions tab). A test that only passes on retry is reported as a flaky warning.
+  GitHub pauses scheduled workflows after 60 days without repository activity.
+
 ## Deploy (GitHub Pages)
 
 1. Push to `main` on GitHub.
@@ -63,6 +74,10 @@ Tests use relative URLs (`page.goto('pages/login.html')`), so `baseURL` must end
 (the config adds it if missing).
 
 ## Toggles and reset
+
+Every page has a **Test toggles** panel in the footer: set a delay, tick "Fail requests", and press
+**Apply toggles** (other query parameters are kept). **Clear toggles** removes both. You can still type the
+parameters into the URL yourself.
 
 | Param | Effect |
 | --- | --- |

@@ -52,7 +52,7 @@ test.describe('Main navigation', () => {
     await expect(nav.getByRole('link', { name: 'Accessibility' })).toBeVisible();
   });
 
-  test('every page in the menus loads', async ({ page }) => {
+  test('every page in the menus loads', { tag: '@smoke' }, async ({ page }) => {
     await page.goto('index.html');
     const nav = page.getByRole('navigation', { name: 'Main' });
     const hrefs = await nav.locator('a').evaluateAll((links) => links.map((a) => (a as HTMLAnchorElement).href));

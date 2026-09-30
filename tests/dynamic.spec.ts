@@ -1,7 +1,7 @@
 import { test, expect } from './fixtures';
 
 test.describe('Dynamic content', () => {
-  test('loading quotes shows a spinner, then 5 quotes', async ({ page }) => {
+  test('loading quotes shows a spinner, then 5 quotes', { tag: '@smoke' }, async ({ page }) => {
     await page.goto('pages/dynamic.html?delay=500');
     await page.getByTestId('load-btn').click();
     await expect(page.getByTestId('load-spinner')).toBeVisible();

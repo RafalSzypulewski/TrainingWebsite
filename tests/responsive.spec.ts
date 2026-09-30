@@ -11,7 +11,7 @@ const SIZES = {
 };
 
 test.describe('Responsive layout by viewport', () => {
-  test('mobile', async ({ page }) => {
+  test('mobile', { tag: '@smoke' }, async ({ page }) => {
     await page.setViewportSize(SIZES.mobile);
     await page.goto('pages/responsive.html');
 

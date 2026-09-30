@@ -116,7 +116,7 @@ test.describe('Confirmation', () => {
   });
 });
 
-test('end-to-end purchase through the UI with a promo code', async ({ page }) => {
+test('end-to-end purchase through the UI with a promo code', { tag: '@smoke' }, async ({ page }) => {
   await page.goto('pages/shop.html');
   await page.getByTestId('category-filter').selectOption('Books');
   await page.getByTestId('add-5').click(); // Clean Code $39.90

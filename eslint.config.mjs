@@ -18,6 +18,8 @@ export default tseslint.config(
     rules: {
       // Un-awaited Playwright actions (click, goto, fill, ...) are a classic source of flaky tests.
       '@typescript-eslint/no-floating-promises': 'error',
+      // Helpers that contain the assertions for a test.
+      'playwright/expect-expect': ['warn', { assertFunctionNames: ['expect', 'expectVersionFooter'] }],
     },
   },
 
