@@ -52,7 +52,11 @@ export default function (): void {
     const slow = http.get(url('/api/slow?ms=100'));
     check(slow, {
       'slow: status is 200': (r) => r.status === 200,
-      'slow: took at least 100 ms': (r) => r.timings.duration >= 100,
+      // Never assert an exact lower bound on a timer-based duration: the server's timer can fire a few
+      // milliseconds early (more on a busy CI machine), so 100 ms of delay can be measured as 99.x ms.
+      // The server's own report of the delay is exact, the measured time only needs to be roughly right.
+      'slow: server applied the 100 ms delay': (r) => r.json('delayMs') === 100,
+      'slow: took about 100 ms or more': (r) => r.timings.duration >= 90,
     });
   });
 
