@@ -1,5 +1,9 @@
 # Performance practice with k6
 
+The site has matching pages (menu **Performance**: the lab and an API explorer). They find the API when you open them from
+the practice server, `http://127.0.0.1:4180/pages/performance.html`, or when you add `?api=http://127.0.0.1:4180` to the address
+of another local copy of the site.
+
 New to this? Run `npm run perf:smoke`, then `npm run perf:load`, then work through [EXERCISES.md](EXERCISES.md).
 
 A small, local-only playground for learning performance testing. It is **not** part of the published site:

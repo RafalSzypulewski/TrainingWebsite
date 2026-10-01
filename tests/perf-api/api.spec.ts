@@ -20,9 +20,23 @@ test.describe('health and unknown routes', () => {
     expect(await wrongMethod.json()).toEqual({ error: 'Method not allowed' });
   });
 
-  test('API responses allow cross-origin use', async ({ request }) => {
-    const response = await request.get('api/health');
-    expect(response.headers()['access-control-allow-origin']).toBe('*');
+  test('API responses allow cross-origin use and expose the useful headers', async ({ request }) => {
+    for (const path of ['api/health', 'api/products/999', 'api/limited?limit=1&key=cors-test-a&window=5', 'api/payload?kb=1']) {
+      const response = await request.get(path);
+      expect(response.headers()['access-control-allow-origin'], path).toBe('*');
+      expect(response.headers()['access-control-expose-headers'], path).toContain('Retry-After');
+    }
+    const limited = await request.get('api/limited?limit=1&key=cors-test-a&window=5'); // second call: 429
+    expect(limited.status()).toBe(429);
+    expect(limited.headers()['access-control-allow-origin']).toBe('*');
+  });
+
+  test('a CORS preflight allows the Authorization header and every method the API uses', async ({ request }) => {
+    const response = await request.fetch('api/cart/items', { method: 'OPTIONS' });
+    expect(response.status()).toBe(204);
+    expect(response.headers()['access-control-allow-headers']).toMatch(/Authorization/);
+    expect(response.headers()['access-control-allow-headers']).toMatch(/Content-Type/);
+    for (const method of ['GET', 'POST', 'DELETE']) expect(response.headers()['access-control-allow-methods']).toContain(method);
   });
 });
 
@@ -180,6 +194,8 @@ test.describe('static files', () => {
     const home = await request.get('');
     expect(home.status()).toBe(200);
     expect(home.headers()['content-type']).toContain('text/html');
+    // The practice pages read this header to learn that the API lives on the same origin.
+    expect(home.headers()['server-timing']).toContain('practice-api');
     expect(await home.text()).toContain('Playwright Practice Lab');
 
     expect((await request.get('pages/login.html')).status()).toBe(200);

@@ -1,0 +1,50 @@
+name: k6 performance practice
+
+# Checks that the k6 practice material still works: the smoke and load scripts pass, and every exercise
+# solution passes. The stress script is NOT run (it is meant to end red), and nothing here ever targets the
+# deployed site: the scripts refuse non-local addresses.
+
+on:
+  pull_request:
+    paths:
+      - 'perf/**'
+      - 'assets/data/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/perf.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'perf/**'
+      - 'assets/data/**'
+      - '.github/workflows/perf.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: perf-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  k6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: grafana/setup-k6-action@v1
+        with:
+          k6-version: '2.2.0'
+      - run: k6 version
+      - name: Smoke test
+        run: npm run perf:smoke
+      - name: Load test
+        run: npm run perf:load
+      - name: Exercise solutions
+        run: npm run perf:solutions

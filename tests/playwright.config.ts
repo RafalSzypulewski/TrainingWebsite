@@ -11,6 +11,9 @@ const root = path.resolve(__dirname, '..');
 
 // The practice API for k6 (perf/server) only exists locally, never on GitHub Pages.
 const perfURL = 'http://127.0.0.1:4180/';
+// The API explorer page tests get their own API instance, so the contract tests' _reset (which wipes
+// the whole server) can never disturb them.
+const explorerPort = 4182;
 
 export default defineConfig({
   testDir: '.',
@@ -36,5 +39,12 @@ export default defineConfig({
     : [
         { command: 'npx serve . -l 4173', cwd: root, url: baseURL, reuseExistingServer: !process.env.CI },
         { command: 'node perf/server/server.js', cwd: root, url: `${perfURL}api/health`, reuseExistingServer: !process.env.CI },
+        {
+          command: 'node perf/server/server.js',
+          cwd: root,
+          env: { PERF_PORT: String(explorerPort) },
+          url: `http://127.0.0.1:${explorerPort}/api/health`,
+          reuseExistingServer: !process.env.CI,
+        },
       ],
 });

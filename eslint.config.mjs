@@ -19,6 +19,8 @@ export default tseslint.config(
       // Un-awaited Playwright actions (click, goto, fill, ...) are a classic source of flaky tests.
       '@typescript-eslint/no-floating-promises': 'error',
       // Helpers that contain the assertions for a test.
+      // Skipping because the environment lacks something (for example the local practice API) is fine.
+      'playwright/no-skipped-test': ['warn', { allowConditional: true }],
       'playwright/expect-expect': ['warn', { assertFunctionNames: ['expect', 'expectVersionFooter'] }],
     },
   },
@@ -43,7 +45,7 @@ export default tseslint.config(
     extends: [js.configs.recommended],
     languageOptions: {
       sourceType: 'script',
-      globals: { ...globals.browser, PW: 'readonly', Shop: 'readonly' },
+      globals: { ...globals.browser, PW: 'readonly', Shop: 'readonly', PerfApi: 'readonly' },
     },
     rules: {
       'no-unused-vars': ['error', { args: 'none' }],
