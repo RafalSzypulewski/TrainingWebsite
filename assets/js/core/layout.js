@@ -50,6 +50,19 @@
     }).join('');
   }
 
+  /** Header switch between the dark (default) and light color themes; the choice is stored by core/theme.js. */
+  function wireThemeToggle(button) {
+    const sync = () => {
+      const dark = PWTheme.get() === 'dark';
+      button.textContent = dark ? '☀ Light mode' : '☾ Dark mode';
+      button.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    };
+    button.addEventListener('click', () => PWTheme.toggle());
+    document.addEventListener('pw:theme', sync);
+    window.addEventListener('storage', sync);
+    sync();
+  }
+
   function buildHeader() {
     const session = PW.session.get();
     const auth = session ? `<span class="nav-auth" data-testid="nav-user">Signed in as ${PW.esc(session.username)}</span>` : '';
@@ -61,8 +74,10 @@
         <a class="brand" href="${PW.url('index.html')}" data-testid="brand">PW Practice Lab</a>
         <nav aria-label="Main"><ul>${navHtml()}</ul></nav>
         ${auth}
+        <button type="button" class="theme-toggle" data-testid="theme-toggle"></button>
       </div>`;
     document.body.prepend(header);
+    wireThemeToggle(header.querySelector('.theme-toggle'));
     return header;
   }
 

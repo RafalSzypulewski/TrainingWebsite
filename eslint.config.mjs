@@ -45,7 +45,7 @@ export default tseslint.config(
     extends: [js.configs.recommended],
     languageOptions: {
       sourceType: 'script',
-      globals: { ...globals.browser, PW: 'readonly', Shop: 'readonly', PerfApi: 'readonly' },
+      globals: { ...globals.browser, PW: 'readonly', PWTheme: 'readonly', Shop: 'readonly', PerfApi: 'readonly' },
     },
     rules: {
       'no-unused-vars': ['error', { args: 'none' }],
