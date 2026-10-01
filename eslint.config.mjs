@@ -23,6 +23,20 @@ export default tseslint.config(
     },
   },
 
+  // Practice API and runner for k6 (Node, CommonJS)
+  {
+    files: ['perf/server/**/*.js', 'perf/run.js'],
+    extends: [js.configs.recommended],
+    languageOptions: { sourceType: 'commonjs', globals: globals.node },
+  },
+
+  // k6 scripts (TypeScript, run by k6, not by Node)
+  {
+    files: ['perf/k6/**/*.ts'],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    languageOptions: { globals: { __ENV: 'readonly', __VU: 'readonly', __ITER: 'readonly' } },
+  },
+
   // Site code (plain browser scripts, loaded with <script defer>; PW and Shop are shared globals)
   {
     files: ['assets/js/**/*.js'],

@@ -22,7 +22,11 @@ tests/
   core/ intermediate/ flow/ advanced/   specs grouped like the navigation menu
   site/                     cross-cutting specs: navigation, toggles, version, link crawl, PW helpers
   support/                  fixtures.ts (console-error guard), helpers.ts, crawler.ts, pw-globals.d.ts
+  perf-api/                 contract tests for the k6 practice API (plain HTTP, no browser)
   playwright.config.ts, tsconfig.json
+perf/                       performance practice with k6 (local only, never deployed): see perf/README.md
+  server/server.js          practice API + the static site, behaviour controlled by query parameters
+  k6/                       TypeScript k6 scripts and shared helpers
 .github/workflows/          tests.yml (PRs), pages.yml (deploy + smoke), nightly.yml (live site)
 ```
 
@@ -89,6 +93,19 @@ test.use({ allowedConsoleErrors: [/Failed to load resource.*users\.json/] });
 - `.github/workflows/nightly.yml` runs the whole suite three times against the live site every night at 03:17 UTC
   (also on demand from the Actions tab). A test that only passes on retry is reported as a flaky warning.
   GitHub pauses scheduled workflows after 60 days without repository activity.
+
+## Performance practice (k6)
+
+Besides Playwright, the repo has a small playground for load and performance testing with [k6](https://grafana.com/docs/k6/):
+a local practice API with latency, failures and payload sizes you control, plus TypeScript k6 scripts.
+It runs on your machine only (GitHub Pages is static). Quick start:
+
+```bash
+winget install GrafanaLabs.k6   # or: brew install k6
+npm run perf:smoke              # starts the practice server, runs k6, stops the server
+```
+
+Details, endpoint list and safety rules: [perf/README.md](perf/README.md).
 
 ## Deploy (GitHub Pages)
 
