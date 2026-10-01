@@ -168,7 +168,9 @@
 
     /** Clears every bit of state this site may have stored, then reloads. */
     resetData() {
+      const theme = localStorage.getItem('pw.theme'); // the color theme is a viewer preference, not test data
       localStorage.clear();
+      if (theme) localStorage.setItem('pw.theme', theme);
       sessionStorage.clear();
       PW.cookie.names().forEach((name) => PW.cookie.remove(name));
       location.reload();
