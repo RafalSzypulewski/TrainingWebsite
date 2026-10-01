@@ -8,7 +8,9 @@
     "test": "playwright test -c tests/playwright.config.ts",
     "test:smoke": "playwright test -c tests/playwright.config.ts --grep @smoke",
     "test:ui": "playwright test -c tests/playwright.config.ts --ui",
-    "typecheck": "tsc -p tests/tsconfig.json",
+    "perf:server": "node perf/server/server.js",
+    "perf:smoke": "node perf/run.js perf/k6/smoke.ts",
+    "typecheck": "tsc -p tests/tsconfig.json && tsc -p perf/tsconfig.json",
     "lint": "eslint .",
     "check": "npm run typecheck && npm run lint",
     "report": "playwright show-report"
@@ -17,6 +19,7 @@
     "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.49.0",
+    "@types/k6": "^2.3.0",
     "@types/node": "^22.0.0",
     "eslint": "^10.11.0",
     "eslint-plugin-playwright": "^2.12.0",
