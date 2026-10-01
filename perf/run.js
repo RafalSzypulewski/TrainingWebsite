@@ -1,21 +1,32 @@
 'use strict';
 /*
- * Runs a k6 script against the practice server, starting the server first when it is not
- * already running, and stopping it afterwards.
+ * Runs k6 scripts against the practice server, starting the server first when it is not already
+ * running, and stopping it afterwards.
  *
  *   node perf/run.js perf/k6/smoke.ts            (npm run perf:smoke)
  *   node perf/run.js perf/k6/smoke.ts --vus 3    (extra arguments go to k6)
+ *   node perf/run.js perf/k6/solutions           (a folder: runs every .ts file in it, one after another)
  */
 const { spawn } = require('node:child_process');
+const fs = require('node:fs');
 const path = require('node:path');
 
 const PORT = Number(process.env.PERF_PORT) || 4180;
 const BASE_URL = `http://127.0.0.1:${PORT}`;
-const [script, ...k6Args] = process.argv.slice(2);
+const [target, ...k6Args] = process.argv.slice(2);
 
-if (!script) {
-  console.error('Usage: node perf/run.js <k6 script> [k6 arguments]');
+if (!target) {
+  console.error('Usage: node perf/run.js <k6 script or folder> [k6 arguments]');
   process.exit(2);
+}
+
+function scriptsIn(target) {
+  if (!fs.existsSync(target)) {
+    console.error(`Not found: ${target}`);
+    process.exit(2);
+  }
+  if (!fs.statSync(target).isDirectory()) return [target];
+  return fs.readdirSync(target).filter((f) => f.endsWith('.ts')).sort().map((f) => path.join(target, f));
 }
 
 async function isUp() {
@@ -35,24 +46,8 @@ async function waitUntilUp(timeoutMs) {
   return false;
 }
 
-async function main() {
-  let server = null;
-  if (await isUp()) {
-    console.log(`Using the practice server that is already running on ${BASE_URL}`);
-  } else {
-    server = spawn(process.execPath, [path.join(__dirname, 'server', 'server.js')], {
-      env: { ...process.env, PERF_PORT: String(PORT) },
-      stdio: 'ignore',
-    });
-    if (!(await waitUntilUp(5000))) {
-      server.kill();
-      console.error(`The practice server did not start on ${BASE_URL} (is the port in use?)`);
-      return 1;
-    }
-    console.log(`Started the practice server on ${BASE_URL}`);
-  }
-
-  const code = await new Promise((resolve) => {
+function runK6(script) {
+  return new Promise((resolve) => {
     const k6 = spawn('k6', ['run', script, '-e', `BASE_URL=${BASE_URL}`, ...k6Args], { stdio: 'inherit' });
     k6.on('error', (err) => {
       if (err.code === 'ENOENT') {
@@ -69,9 +64,46 @@ async function main() {
     });
     k6.on('exit', (exitCode, signal) => resolve(exitCode ?? (signal ? 1 : 0)));
   });
+}
+
+async function main() {
+  const scripts = scriptsIn(target);
+  if (scripts.length === 0) {
+    console.error(`No .ts scripts in ${target}`);
+    return 2;
+  }
+
+  let server = null;
+  if (await isUp()) {
+    console.log(`Using the practice server that is already running on ${BASE_URL}`);
+  } else {
+    server = spawn(process.execPath, [path.join(__dirname, 'server', 'server.js')], {
+      env: { ...process.env, PERF_PORT: String(PORT) },
+      stdio: 'ignore',
+    });
+    if (!(await waitUntilUp(5000))) {
+      server.kill();
+      console.error(`The practice server did not start on ${BASE_URL} (is the port in use?)`);
+      return 1;
+    }
+    console.log(`Started the practice server on ${BASE_URL}`);
+  }
+
+  const failed = [];
+  for (const script of scripts) {
+    if (scripts.length > 1) console.log(`\n===== ${script} =====`);
+    // Start every script from a clean server state (sessions, carts, rate limits, queues).
+    await fetch(`${BASE_URL}/api/_reset`, { method: 'POST' }).catch(() => {});
+    const code = await runK6(script);
+    if (code !== 0) failed.push({ script, code });
+    if (code === 127) break; // k6 itself is missing: no point in trying the rest
+  }
 
   if (server) server.kill();
-  return code;
+  if (scripts.length > 1) {
+    console.log(failed.length ? `\n${failed.length} of ${scripts.length} scripts failed:\n${failed.map((f) => `  ${f.script} (exit ${f.code})`).join('\n')}` : `\nAll ${scripts.length} scripts passed.`);
+  }
+  return failed.length ? failed[0].code : 0;
 }
 
 main().then((code) => process.exit(code));

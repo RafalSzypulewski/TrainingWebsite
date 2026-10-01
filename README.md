@@ -22,11 +22,11 @@ tests/
   core/ intermediate/ flow/ advanced/   specs grouped like the navigation menu
   site/                     cross-cutting specs: navigation, toggles, version, link crawl, PW helpers
   support/                  fixtures.ts (console-error guard), helpers.ts, crawler.ts, pw-globals.d.ts
-  perf-api/                 contract tests for the k6 practice API (plain HTTP, no browser)
+  perf-api/                 contract tests for the k6 practice API (plain HTTP, no browser; reset.spec.ts runs last, alone)
   playwright.config.ts, tsconfig.json
 perf/                       performance practice with k6 (local only, never deployed): see perf/README.md
   server/server.js          practice API + the static site, behaviour controlled by query parameters
-  k6/                       TypeScript k6 scripts and shared helpers
+  k6/                       TypeScript k6 scripts: smoke, load, stress, lib/, exercises/ and solutions/
 .github/workflows/          tests.yml (PRs), pages.yml (deploy + smoke), nightly.yml (live site)
 ```
 
@@ -103,9 +103,10 @@ It runs on your machine only (GitHub Pages is static). Quick start:
 ```bash
 winget install GrafanaLabs.k6   # or: brew install k6
 npm run perf:smoke              # starts the practice server, runs k6, stops the server
+npm run perf:load               # a shopping journey with 5 virtual users
 ```
 
-Details, endpoint list and safety rules: [perf/README.md](perf/README.md).
+Details, endpoint list and safety rules: [perf/README.md](perf/README.md). Six guided exercises: [perf/EXERCISES.md](perf/EXERCISES.md).
 
 ## Deploy (GitHub Pages)
 

@@ -25,7 +25,11 @@ export default defineConfig({
     // API contract tests for the practice server: no browser, plain HTTP requests.
     ...(external
       ? []
-      : [{ name: 'perf-api', testMatch: '**/perf-api/**/*.spec.ts', use: { baseURL: perfURL } }]),
+      : [
+          { name: 'perf-api', testMatch: '**/perf-api/**/*.spec.ts', testIgnore: '**/perf-api/reset.spec.ts', use: { baseURL: perfURL } },
+          // _reset wipes the whole server, so it must run alone, after everything else has finished.
+          { name: 'perf-api-reset', testMatch: '**/perf-api/reset.spec.ts', dependencies: ['perf-api'], use: { baseURL: perfURL } },
+        ]),
   ],
   webServer: external
     ? undefined

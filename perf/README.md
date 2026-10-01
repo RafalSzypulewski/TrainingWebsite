@@ -1,5 +1,7 @@
 # Performance practice with k6
 
+New to this? Run `npm run perf:smoke`, then `npm run perf:load`, then work through [EXERCISES.md](EXERCISES.md).
+
 A small, local-only playground for learning performance testing. It is **not** part of the published site:
 GitHub Pages only serves static files, so the API below runs on your machine.
 
@@ -20,10 +22,16 @@ k6 scripts (perf/k6/*.ts)  --HTTP-->  practice server (http://127.0.0.1:4180)
 ## Run
 
 ```bash
-npm run perf:smoke              # starts the practice server if needed, runs the script, stops it
-npm run perf:smoke -- --vus 3   # extra arguments go to k6
+npm run perf:smoke              # one user, a few checks: does everything work?
+npm run perf:load               # 5 virtual users repeating a shopping journey, with thresholds
+npm run perf:stress             # pushes a capacity-limited resource past its limit (expected to end red)
+npm run perf:solutions          # every exercise solution, one after another
+npm run perf -- <script> [k6 args]   # any script, e.g. perf/k6/exercises/01-thresholds.ts -e VUS=4
 npm run perf:server             # start the server yourself (e.g. to try endpoints in a browser)
 ```
+
+The runner starts the practice server if it is not already running, **resets its state before every script**, and
+stops the server again if it started it. Arguments after the script name go to k6 (`--vus 3`, `-e NAME=value`).
 
 A script **fails** (non-zero exit code, `99` for thresholds) when a threshold or check is broken, which is exactly
 what makes it usable in CI.
@@ -41,6 +49,17 @@ All parameters are validated; bad values return `400` with `{ "error": "..." }`.
 | `GET /api/flaky` | `rate` (0-1, default 0.2) | fails that share of requests with `500` |
 | `GET /api/status/:code` | | answers with that status code (200-599) |
 | `GET /api/payload` | `kb` (0-5120), `gzip=1` | response of that size, optionally gzip-compressed |
+| `POST /api/login` | JSON `{ username, password }` | `{ token, user }`; `401` wrong credentials, `423` locked account. Accounts: `assets/data/login-users.json` |
+| `GET /api/me` | `Authorization: Bearer <token>` | the logged-in user; `401` without a valid token |
+| `GET /api/cart` | token | items, `subtotal`, `shipping`, `total` (cents; shipping is free from 10 000) |
+| `POST /api/cart/items` | token, JSON `{ productId, qty }` | `201` with the cart; `404` unknown product, `409` out of stock / over stock |
+| `DELETE /api/cart/items/:productId` | token | the cart; `404` if not in the cart |
+| `POST /api/checkout` | token | `201` with the order (`ORD-1001`, ...) and empties the cart; `400` if empty |
+| `GET /api/orders` | token | the logged-in user's orders |
+| `GET /api/limited` | `limit` (5), `window` seconds (10), `key` | fixed-window rate limit; `429` + `Retry-After` when exceeded. The key defaults to the token |
+| `GET /api/queue` | `workers` (2), `ms` (200), `maxQueue` (500), `key` | limited capacity of `workers / ms` requests per second: later requests wait in line (`waitedMs` in the answer); `503` + `Retry-After` when the queue is full |
+| `GET /api/_state` | | counts of sessions, orders, rate buckets and queue depths (diagnostics) |
+| `POST /api/_reset` | | clears all of the above state |
 
 ### Reproducible randomness
 
@@ -60,8 +79,10 @@ Without `seed` the values are truly random.
 | `perf/server/server.js` | the practice server (Node built-ins only) |
 | `perf/run.js` | starts the server if needed, runs one k6 script, stops the server |
 | `perf/k6/lib/config.ts` | `BASE_URL`, `url()` and the "localhost only" guard |
-| `perf/k6/smoke.ts` | the first script: one user, a few checks, three thresholds |
-| `tests/perf-api/` | Playwright contract tests for the server (`npx playwright test --project=perf-api`) |
+| `perf/k6/smoke.ts`, `load.ts`, `stress.ts` | the three reference scripts (see [EXERCISES.md](EXERCISES.md)) |
+| `perf/k6/lib/` | shared helpers: `config` (URLs, env settings, think time), `auth` (login), `data` (test users), `journey` (the shopping flow + custom metrics) |
+| `perf/k6/exercises/`, `perf/k6/solutions/` | six exercises with `TODO`s and their worked solutions |
+| `tests/perf-api/` | Playwright contract tests for the server (`npx playwright test --project=perf-api --project=perf-api-reset`) |
 
 ## Safety rules
 
