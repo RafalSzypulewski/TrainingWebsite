@@ -56,7 +56,7 @@ test.describe('Main navigation', () => {
     await page.goto('index.html');
     const nav = page.getByRole('navigation', { name: 'Main' });
     const hrefs = await nav.locator('a').evaluateAll((links) => links.map((a) => (a as HTMLAnchorElement).href));
-    expect(hrefs).toHaveLength(15);
+    expect(hrefs).toHaveLength(17);
     for (const href of hrefs) {
       const response = await page.request.get(href);
       expect(response.ok(), href).toBe(true);

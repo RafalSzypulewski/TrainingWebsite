@@ -29,6 +29,10 @@
       ['pages/responsive.html', 'Responsive'],
       ['pages/tricky.html', 'Tricky'],
     ]],
+    ['Performance', [
+      ['pages/performance.html', 'Performance lab'],
+      ['pages/performance-api.html', 'API explorer'],
+    ]],
   ];
 
   /** "delay=500", "fail=true", ... for the toggles present in the URL. */

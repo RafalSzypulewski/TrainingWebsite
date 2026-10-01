@@ -371,3 +371,28 @@ kbd { background: #eceefb; border: 1px solid var(--border); border-bottom-width:
 .toggle-form label { display: inline-flex; align-items: center; gap: 6px; color: #e4e2ff; }
 .toggle-form input[type="number"] { width: 110px; padding: 4px 8px; }
 .toggle-error { color: #fecaca; font-size: 0.85rem; flex-basis: 100%; }
+
+/* Performance pages */
+.api-badge { display: inline-block; margin: 0 0 8px; padding: 6px 14px; border-radius: 999px; font-weight: 700; }
+.api-badge.checking { background: #eef0ff; color: var(--primary-dark); }
+.api-badge.online { background: #dcfce7; color: #14532d; }
+.api-badge.offline { background: #fee2e2; color: #7f1d1d; }
+.steps li + li { margin-top: 8px; }
+.glossary { display: grid; grid-template-columns: max-content 1fr; gap: 8px 20px; margin: 0; }
+.glossary dt { font-weight: 700; color: var(--text); }
+@media (max-width: 640px) { .glossary { grid-template-columns: 1fr; gap: 0; } .glossary dd { margin-bottom: 10px; } }
+.inline-fields { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0 14px; }
+.inline-fields .field { flex: 1 1 130px; max-width: 220px; }
+.inline-fields .btn { margin-bottom: 14px; }
+.endpoint h3 { margin: 0 0 4px; font-size: 1.05rem; }
+.endpoint form { margin-top: 8px; }
+.method { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; color: #fff; background: #0e7490; }
+.method.post { background: #b45309; }
+.method.delete { background: #b91c1c; }
+.result { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.result-line { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin: 0 0 8px; }
+.status-badge { padding: 2px 10px; border-radius: 999px; font-weight: 700; font-size: 0.85rem; }
+.status-badge.ok { background: #dcfce7; color: #14532d; }
+.status-badge.error { background: #fee2e2; color: #7f1d1d; }
+.header-list { list-style: none; margin: 0 0 8px; padding: 0; font-size: 0.85rem; color: var(--muted); }
+.result-body { background: #1e1b4b; color: #d7ffe0; padding: 12px; border-radius: var(--radius); overflow: auto; max-height: 260px; font-size: 0.82rem; margin: 0; }

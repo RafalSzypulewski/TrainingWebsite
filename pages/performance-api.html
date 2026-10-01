@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API explorer - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/core/pw.js" defer></script>
+  <script src="../assets/js/core/layout.js" defer></script>
+  <script src="../assets/js/perf/api.js" defer></script>
+  <script src="../assets/js/perf/explorer.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div class="stack">
+        <h1>API explorer</h1>
+        <p>Try every endpoint of the practice API by hand before you load it with k6. Each answer shows the status, how long it
+          took and the headers that matter. See the <a href="performance.html">Performance lab</a> for how to start the API.</p>
+
+        <section class="card api-status-card" aria-labelledby="h-status">
+          <h2 id="h-status">Practice API status</h2>
+          <p id="api-status" class="api-badge checking" data-testid="api-status" role="status">Checking...</p>
+          <p id="api-hint" class="help" data-testid="api-hint"></p>
+          <div class="actions">
+            <button type="button" class="btn secondary small" id="api-recheck" data-testid="api-recheck">Check again</button>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="h-session" data-testid="session-panel">
+          <h2 id="h-session">Session</h2>
+          <p class="help">The cart and checkout endpoints need a token. Log in first; the token is kept for this browser tab only.</p>
+          <form id="login-form" class="inline-fields" novalidate>
+            <div class="field"><label for="login-username">Username</label><input type="text" id="login-username" value="student" data-testid="login-username"></div>
+            <div class="field"><label for="login-password">Password</label><input type="text" id="login-password" value="Password123!" data-testid="login-password"></div>
+            <button type="submit" class="btn small" id="login-submit" data-testid="login-submit">Log in</button>
+            <button type="button" class="btn secondary small" id="logout" data-testid="logout" hidden>Log out</button>
+          </form>
+          <p id="session-status" role="status" data-testid="session-status">Not logged in.</p>
+        </section>
+
+        <div id="endpoints" class="stack" data-testid="endpoints"></div>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>With the API reachable (<code>?api=http://127.0.0.1:4180</code>), send each endpoint and assert the status line.</li>
+          <li>Send <code>/api/slow</code> with 400 ms and assert the shown duration is at least 400.</li>
+          <li>Hit <code>/api/limited</code> until the 429 appears and read <code>Retry-After</code> from the headers list.</li>
+          <li>Log in, add a product to the cart and check out; assert the order id in the answer.</li>
+          <li>Send <code>/api/me</code> without logging in and assert the 401.</li>
+          <li>Compare the "over the wire" size of <code>/api/payload</code> with and without gzip.</li>
+          <li>Mock the whole API with <code>page.route</code> and test the page without any server.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

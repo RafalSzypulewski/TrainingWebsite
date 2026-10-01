@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Performance lab - PW Practice Lab</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/core/pw.js" defer></script>
+  <script src="../assets/js/core/layout.js" defer></script>
+  <script src="../assets/js/perf/api.js" defer></script>
+  <script src="../assets/js/perf/performance.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="container page-layout">
+      <div class="stack">
+        <h1>Performance lab</h1>
+        <p>Practice performance testing with <a href="https://grafana.com/docs/k6/latest/" rel="noopener">k6</a>: load a small
+          practice API, watch what the numbers say, and learn to tell a healthy system from a struggling one.</p>
+
+        <section class="card api-status-card" aria-labelledby="h-status">
+          <h2 id="h-status">Practice API status</h2>
+          <p id="api-status" class="api-badge checking" data-testid="api-status" role="status">Checking...</p>
+          <p id="api-hint" class="help" data-testid="api-hint"></p>
+          <div class="actions">
+            <button type="button" class="btn secondary small" id="api-recheck" data-testid="api-recheck">Check again</button>
+            <a class="btn small" href="performance-api.html" data-testid="open-explorer">Open the API explorer</a>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="h-why">
+          <h2 id="h-why">Why is there no live demo here?</h2>
+          <p>This site is published as static files on GitHub Pages. A load test needs a server that can be slow, fail
+            or run out of capacity <em>on request</em>, and the <code>?delay</code> and <code>?fail</code> toggles used elsewhere on
+            this site are simulated inside the browser, where k6 cannot see them. So the lab comes with a tiny practice
+            server that runs <strong>on your own machine</strong>.</p>
+          <p class="banner info"><strong>Never point a load test at a site you do not own.</strong> That includes this site's
+            GitHub Pages address. The k6 scripts in the repository refuse to run against anything but localhost.</p>
+        </section>
+
+        <section class="card" aria-labelledby="h-start">
+          <h2 id="h-start">Get started</h2>
+          <ol class="steps" data-testid="setup-steps">
+            <li>Install k6 (version 1.0 or newer): <code>winget install GrafanaLabs.k6</code> on Windows, <code>brew install k6</code> on macOS.</li>
+            <li>Clone the repository and run <code>npm install</code>.</li>
+            <li>Run <code>npm run perf:smoke</code>. It starts the practice server, runs a first k6 script and stops the server again.</li>
+            <li>Run <code>npm run perf:load</code>, then <code>npm run perf:stress</code> and compare the results.</li>
+            <li>Work through the exercises below. To explore the API by hand, run <code>npm run perf:server</code> and open
+              <code>http://127.0.0.1:4180/pages/performance-api.html</code>.</li>
+          </ol>
+        </section>
+
+        <section class="card" aria-labelledby="h-scripts">
+          <h2 id="h-scripts">The reference scripts</h2>
+          <div class="table-wrap">
+            <table class="data" data-testid="scripts-table">
+              <thead><tr><th scope="col">Command</th><th scope="col">What it does</th><th scope="col">Expected result</th></tr></thead>
+              <tbody>
+                <tr><td><code>npm run perf:smoke</code></td><td>One user, a few checks: does everything work?</td><td>green</td></tr>
+                <tr><td><code>npm run perf:load</code></td><td>Five virtual users repeating a shopping journey</td><td>green</td></tr>
+                <tr><td><code>npm run perf:stress</code></td><td>Pushes a capacity-limited resource past its limit</td><td>red, on purpose</td></tr>
+                <tr><td><code>npm run perf:solutions</code></td><td>Every exercise solution, one after another</td><td>green</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="h-ex">
+          <h2 id="h-ex">k6 exercises</h2>
+          <p>Six exercises with starter scripts and worked solutions live in the repository under
+            <code>perf/k6/exercises</code>, described in
+            <a href="https://github.com/RafalSzypulewski/TrainingWebsite/blob/main/perf/EXERCISES.md" rel="noopener">perf/EXERCISES.md</a>.</p>
+          <ol data-testid="k6-exercises">
+            <li><strong>Thresholds</strong>: give one endpoint its own limit, using tags.</li>
+            <li><strong>Configuration</strong>: settings from the command line, and a ramp-up.</li>
+            <li><strong>Test data and correlation</strong>: one account per virtual user, a token passed between requests.</li>
+            <li><strong>Custom metrics</strong>: measure the business flow, not just requests.</li>
+            <li><strong>Open versus closed models</strong>: why 20 patient users are not the same as 15 new visitors per second.</li>
+            <li><strong>Resilience</strong>: honour <code>429</code> and <code>Retry-After</code>, retry a flaky service.</li>
+          </ol>
+        </section>
+
+        <section class="card" aria-labelledby="h-words">
+          <h2 id="h-words">Vocabulary</h2>
+          <dl class="glossary" data-testid="glossary">
+            <dt>Virtual user (VU)</dt><dd>One simulated user running your script in a loop.</dd>
+            <dt>Iteration</dt><dd>One run of the script's main function.</dd>
+            <dt>Check</dt><dd>An assertion that is counted but does not stop the test.</dd>
+            <dt>Threshold</dt><dd>A pass/fail rule on a metric, for example "95% of requests under 500 ms". It decides the exit code.</dd>
+            <dt>Percentile (p95)</dt><dd>95% of requests were faster than this value. Averages hide the slow ones, percentiles do not.</dd>
+            <dt>Throughput</dt><dd>How many requests (or iterations) are completed per second.</dd>
+            <dt>Think time</dt><dd>The pause a real user takes between actions. Without it the load is unrealistically harsh.</dd>
+            <dt>Closed model</dt><dd>A fixed number of users; each waits for its answer before the next request. It slows down together with the server.</dd>
+            <dt>Open model</dt><dd>New requests arrive at a fixed rate no matter how slow the server is, like real visitors.</dd>
+            <dt>Saturation</dt><dd>The point where a resource is fully used and requests start to queue: latency climbs steeply.</dd>
+          </dl>
+        </section>
+      </div>
+
+      <aside class="exercises" data-testid="exercises" aria-labelledby="ex-title">
+        <h2 id="ex-title">Exercises</h2>
+        <ol>
+          <li>Assert the status badge when the API is not reachable, and that the hint explains how to start it.</li>
+          <li>Mock <code>/api/health</code> with <code>page.route</code> to switch the badge to "online".</li>
+          <li>Make the health check fail (500, then an aborted request) and assert the badge stays "offline".</li>
+          <li>Use <code>?api=</code> with a non-local address and assert it is rejected.</li>
+          <li>Click "Check again" after changing the mock, without reloading the page.</li>
+          <li>Assert the setup steps and the table of scripts by role, not by test id.</li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

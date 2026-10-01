@@ -19,6 +19,12 @@ const HOST = '127.0.0.1';
 const PORT = Number(process.env.PERF_PORT) || 4180;
 const LIMITS = { maxDelayMs: 10_000, maxPayloadKb: 5_120, maxPageSize: 50 };
 // Only what GitHub Pages publishes is served, so local and deployed behave alike.
+// The practice pages call the API from another port, so every API response carries CORS headers, and
+// the headers a page may want to read (Retry-After, rate-limit info, size) are exposed explicitly.
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Expose-Headers': 'Retry-After, X-RateLimit-Limit, X-RateLimit-Remaining, Content-Encoding, Content-Length',
+};
 const PUBLISHED = new Set(['index.html', 'pages', 'assets']);
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
@@ -102,7 +108,7 @@ function sendJSON(res, status, body, headers = {}) {
 
 /** 204 and 304 must not carry a body. */
 function sendReply(res, { status, body, headers }) {
-  const allHeaders = { 'Access-Control-Allow-Origin': '*', ...headers };
+  const allHeaders = { ...CORS, ...headers };
   if (status === 204 || status === 304) {
     res.writeHead(status, allHeaders);
     res.end();
@@ -252,7 +258,7 @@ const routes = [
     const letters = new Array(length);
     for (let n = 0; n < length; n++) letters[n] = chars[Math.floor((seed === null ? Math.random() : seeded(seed, n)) * chars.length)];
     const body = letters.join('');
-    const headers = { 'Content-Type': 'text/plain; charset=utf-8', 'Access-Control-Allow-Origin': '*' };
+    const headers = { 'Content-Type': 'text/plain; charset=utf-8', ...CORS };
     const wantsGzip = params.get('gzip') === '1' && /\bgzip\b/.test(req.headers['accept-encoding'] ?? '');
     const data = wantsGzip ? zlib.gzipSync(body) : Buffer.from(body);
     if (wantsGzip) headers['Content-Encoding'] = 'gzip';
@@ -336,7 +342,6 @@ const routes = [
     const headers = {
       'X-RateLimit-Limit': String(limit),
       'X-RateLimit-Remaining': String(Math.max(0, limit - window.count)),
-      'Access-Control-Expose-Headers': 'Retry-After, X-RateLimit-Limit, X-RateLimit-Remaining',
     };
     if (window.count > limit) return new Reply(429, { error: 'Too many requests', retryAfterSeconds: retryAfter }, { ...headers, 'Retry-After': String(retryAfter) });
     return new Reply(200, { ok: true, remaining: limit - window.count }, headers);
@@ -396,7 +401,7 @@ async function handleApi(req, res, url) {
     if (method !== req.method) continue;
     const result = await handler({ req, res, params, match, json: () => readJSON(req) });
     if (result instanceof Reply) sendReply(res, result);
-    else if (result !== undefined) sendJSON(res, 200, result, { 'Access-Control-Allow-Origin': '*' });
+    else if (result !== undefined) sendJSON(res, 200, result, CORS);
     return;
   }
   throw new HttpError(pathMatched ? 405 : 404, pathMatched ? 'Method not allowed' : 'Unknown endpoint');
@@ -416,7 +421,12 @@ function serveStatic(req, res, url) {
   const top = path.relative(ROOT, file).split(path.sep)[0];
   if (!inside || !PUBLISHED.has(top) || !fs.existsSync(file) || !fs.statSync(file).isFile()) throw new HttpError(404, 'Not found');
   const data = fs.readFileSync(file);
-  res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] ?? 'application/octet-stream', 'Content-Length': data.length });
+  // Server-Timing lets the practice pages detect (without a request) that this server also hosts the API.
+  res.writeHead(200, {
+    'Content-Type': MIME[path.extname(file)] ?? 'application/octet-stream',
+    'Content-Length': data.length,
+    'Server-Timing': 'practice-api;desc="Served by the practice server"',
+  });
   res.end(req.method === 'HEAD' ? undefined : data);
 }
 
@@ -426,7 +436,7 @@ function createServer() {
     const url = new URL(req.url, `http://${HOST}`);
     try {
       if (req.method === 'OPTIONS') {
-        res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Allow-Headers': '*' });
+        res.writeHead(204, { ...CORS, 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Authorization, Content-Type' });
         res.end();
       } else if (url.pathname.startsWith('/api/')) {
         await handleApi(req, res, url);
@@ -436,7 +446,7 @@ function createServer() {
     } catch (err) {
       const status = err instanceof HttpError ? err.status : 500;
       if (!(err instanceof HttpError)) console.error(err);
-      if (!res.headersSent) sendJSON(res, status, { error: err instanceof HttpError ? err.message : 'Internal error' }, { 'Access-Control-Allow-Origin': '*' });
+      if (!res.headersSent) sendJSON(res, status, { error: err instanceof HttpError ? err.message : 'Internal error' }, CORS);
       else res.end();
     }
   });

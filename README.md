@@ -16,10 +16,11 @@ assets/
   js/core/                  loaded on EVERY page, in this order: pw.js (shared helpers), layout.js (nav, footer)
   js/pages/                 one script per page, named like the page: login.html -> pages/login.js
   js/shop/                  the mini shop: store.js (cart, promos, totals) plus one script per shop page
+  js/perf/                  the Performance pages: api.js (where the practice API is) plus one script per page
   data/                     static JSON that plays the backend; data/api/ holds the Network page fixtures
   img/, downloads/          images and the downloadable sample file
 tests/
-  core/ intermediate/ flow/ advanced/   specs grouped like the navigation menu
+  core/ intermediate/ flow/ advanced/ performance/   specs grouped like the navigation menu
   site/                     cross-cutting specs: navigation, toggles, version, link crawl, PW helpers
   support/                  fixtures.ts (console-error guard), helpers.ts, crawler.ts, pw-globals.d.ts
   perf-api/                 contract tests for the k6 practice API (plain HTTP, no browser; reset.spec.ts runs last, alone)
@@ -27,7 +28,7 @@ tests/
 perf/                       performance practice with k6 (local only, never deployed): see perf/README.md
   server/server.js          practice API + the static site, behaviour controlled by query parameters
   k6/                       TypeScript k6 scripts: smoke, load, stress, lib/, exercises/ and solutions/
-.github/workflows/          tests.yml (PRs), pages.yml (deploy + smoke), nightly.yml (live site)
+.github/workflows/          tests.yml (PRs), pages.yml (deploy + smoke), nightly.yml (live site), perf.yml (k6 material)
 ```
 
 Conventions:
@@ -106,7 +107,8 @@ npm run perf:smoke              # starts the practice server, runs k6, stops the
 npm run perf:load               # a shopping journey with 5 virtual users
 ```
 
-Details, endpoint list and safety rules: [perf/README.md](perf/README.md). Six guided exercises: [perf/EXERCISES.md](perf/EXERCISES.md).
+Details, endpoint list and safety rules: [perf/README.md](perf/README.md). The site has a **Performance** menu with a
+lab page and an API explorer (they work against the local practice API; on GitHub Pages they say it is offline). Six guided exercises: [perf/EXERCISES.md](perf/EXERCISES.md).
 
 ## Deploy (GitHub Pages)
 
@@ -159,6 +161,8 @@ The footer **Reset data** button clears local/session storage and cookies, then 
 | `pages/accessibility.html` | done | Good vs bad markup side by side, role/label locators, axe scans, keyboard-operable accordion and tabs, aria snapshots |
 | `pages/responsive.html` | done | Breakpoints, collapsing menu, responsive grid and table, `<picture>`, viewport/touch/colour-scheme/reduced-motion emulation |
 | `pages/tricky.html` | done | Duplicate ids, changing classes/ids, delayed-enable, self-disabling, covered and moving buttons, re-rendering list, hidden variants, duplicate text, disabled/readonly/contenteditable |
+| `pages/performance.html` | done | Performance lab: how the k6 practice works, API status badge (offline on static hosts, `?api=` for a local API), setup steps, vocabulary |
+| `pages/performance-api.html` | done | API explorer: try every practice endpoint (latency, errors, rate limits, queue, login/cart/checkout) with status, timing and headers; mock the whole API with `page.route` |
 
 Demo accounts: `student / Password123!`, `admin / Admin123!`, `locked / Locked123!` (locked).
 
