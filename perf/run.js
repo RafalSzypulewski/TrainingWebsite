@@ -9,7 +9,9 @@
  */
 const { spawn } = require('node:child_process');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
+const { describe, explainFile } = require('./explain.js');
 
 const PORT = Number(process.env.PERF_PORT) || 4180;
 const BASE_URL = `http://127.0.0.1:${PORT}`;
@@ -46,9 +48,9 @@ async function waitUntilUp(timeoutMs) {
   return false;
 }
 
-function runK6(script) {
+function runK6(script, extraArgs = []) {
   return new Promise((resolve) => {
-    const k6 = spawn('k6', ['run', script, '-e', `BASE_URL=${BASE_URL}`, ...k6Args], { stdio: 'inherit' });
+    const k6 = spawn('k6', ['run', script, '-e', `BASE_URL=${BASE_URL}`, ...extraArgs, ...k6Args], { stdio: 'inherit' });
     k6.on('error', (err) => {
       if (err.code === 'ENOENT') {
         console.error(
@@ -64,6 +66,16 @@ function runK6(script) {
     });
     k6.on('exit', (exitCode, signal) => resolve(exitCode ?? (signal ? 1 : 0)));
   });
+}
+
+/** Says why a script failed. On GitHub Actions the reasons also become annotations on the run and the pull request. */
+function reportFailure(script, code, reasons) {
+  console.log(`\n${script} FAILED (exit code ${code})${reasons.length ? ', because:' : ''}`);
+  for (const reason of reasons) console.log(`  - ${reason}`);
+  if (process.env.GITHUB_ACTIONS === 'true') {
+    const title = `k6: ${path.basename(script)} failed`;
+    for (const reason of reasons.length ? reasons : [`exit code ${code}`]) console.log(`::error title=${title}::${reason}`);
+  }
 }
 
 async function main() {
@@ -89,15 +101,25 @@ async function main() {
     console.log(`Started the practice server on ${BASE_URL}`);
   }
 
+  // k6 writes a summary of every run here, so that a failure can be explained in a few lines.
+  const summaryDir = fs.mkdtempSync(path.join(os.tmpdir(), 'k6-summary-'));
+  const userExports = k6Args.some((arg) => arg.startsWith('--summary-export'));
+
   const failed = [];
   for (const script of scripts) {
     if (scripts.length > 1) console.log(`\n===== ${script} =====`);
     // Start every script from a clean server state (sessions, carts, rate limits, queues).
     await fetch(`${BASE_URL}/api/_reset`, { method: 'POST' }).catch(() => {});
-    const code = await runK6(script);
-    if (code !== 0) failed.push({ script, code });
+    const summaryFile = path.join(summaryDir, `${path.basename(script)}.json`);
+    const code = await runK6(script, userExports ? [] : [`--summary-export=${summaryFile}`]);
+    if (code !== 0) {
+      failed.push({ script, code });
+      const problems = !userExports && code !== 127 ? explainFile(summaryFile) : null;
+      reportFailure(script, code, problems ? describe(problems) : []);
+    }
     if (code === 127) break; // k6 itself is missing: no point in trying the rest
   }
+  fs.rmSync(summaryDir, { recursive: true, force: true });
 
   if (server) server.kill();
   if (scripts.length > 1) {
