@@ -12,6 +12,7 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const zlib = require('node:zlib');
+const crypto = require('node:crypto');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const HOST = '127.0.0.1';
@@ -28,12 +29,31 @@ const products = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets', 'data', 'p
 const startedAt = Date.now();
 let requestCount = 0;
 
+// ---- state that makes user journeys and capacity limits possible (all in memory) ---------------
+const users = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets', 'data', 'login-users.json'), 'utf8'));
+const FREE_SHIPPING_FROM = 10_000; // cents, same rule as the shop page
+const STANDARD_SHIPPING = 599;
+const sessions = new Map(); // token -> { username, role, cart: Map(productId -> qty) }
+const orders = []; // { id, username, items, subtotal, shipping, total }
+let orderCounter = 1000; // the first order is ORD-1001, like the shop page
+const rateWindows = new Map(); // "key|limit|window" -> { start, count }
+const queues = new Map(); // "key|workers" -> { active, waiting: [{ resolve }] }
+
+function resetState() {
+  sessions.clear();
+  orders.length = 0;
+  orderCounter = 1000;
+  rateWindows.clear();
+  queues.clear();
+}
+
 // ---- helpers --------------------------------------------------------------------------------
 /** A handler result with an explicit status code (anything else returned is sent as 200 JSON). */
 class Reply {
-  constructor(status, body) {
+  constructor(status, body, headers = {}) {
     this.status = status;
     this.body = body;
+    this.headers = headers;
   }
 }
 
@@ -81,16 +101,99 @@ function sendJSON(res, status, body, headers = {}) {
 }
 
 /** 204 and 304 must not carry a body. */
-function sendReply(res, { status, body }) {
+function sendReply(res, { status, body, headers }) {
+  const allHeaders = { 'Access-Control-Allow-Origin': '*', ...headers };
   if (status === 204 || status === 304) {
-    res.writeHead(status, { 'Access-Control-Allow-Origin': '*' });
+    res.writeHead(status, allHeaders);
     res.end();
   } else {
-    sendJSON(res, status, body, { 'Access-Control-Allow-Origin': '*' });
+    sendJSON(res, status, body, allHeaders);
   }
 }
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Reads and parses a JSON request body (at most 100 KB). An empty body counts as {}. */
+function readJSON(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    let size = 0;
+    req.on('data', (chunk) => {
+      size += chunk.length;
+      if (size > 100_000) {
+        reject(new HttpError(413, 'Body too large'));
+        req.destroy();
+      } else {
+        chunks.push(chunk);
+      }
+    });
+    req.on('end', () => {
+      if (!chunks.length) return resolve({});
+      try {
+        const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+        if (body === null || typeof body !== 'object' || Array.isArray(body)) throw new Error('not an object');
+        resolve(body);
+      } catch {
+        reject(new HttpError(400, 'Body must be a JSON object'));
+      }
+    });
+    req.on('error', reject);
+  });
+}
+
+function bearerToken(req) {
+  const match = /^Bearer (\S+)$/.exec(req.headers.authorization ?? '');
+  return match ? match[1] : null;
+}
+
+function requireSession(req) {
+  const session = sessions.get(bearerToken(req));
+  if (!session) throw new HttpError(401, 'Missing or invalid token');
+  return session;
+}
+
+function cartView(session) {
+  const items = [...session.cart].map(([productId, qty]) => {
+    const product = products.find((p) => p.id === productId);
+    return { productId, name: product.name, qty, unitPrice: product.price, lineTotal: product.price * qty };
+  });
+  const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0);
+  const shipping = items.length === 0 || subtotal >= FREE_SHIPPING_FROM ? 0 : STANDARD_SHIPPING;
+  return { items, subtotal, shipping, total: subtotal + shipping };
+}
+
+function positiveInt(value, name) {
+  if (!Number.isInteger(value) || value < 1) throw new HttpError(400, `${name} must be a whole number of at least 1`);
+  return value;
+}
+
+/** Takes a worker slot; waits in a FIFO queue when all `workers` are busy. */
+function acquireSlot(queue, workers) {
+  if (queue.active < workers) {
+    queue.active++;
+    return { granted: Promise.resolve(true), cancel() {} };
+  }
+  let entry;
+  const granted = new Promise((resolve) => {
+    entry = { resolve };
+    queue.waiting.push(entry);
+  });
+  return {
+    granted,
+    cancel() {
+      const index = queue.waiting.indexOf(entry);
+      if (index >= 0) queue.waiting.splice(index, 1);
+      entry.resolve(false); // the client left while waiting
+    },
+  };
+}
+
+/** Hands the slot straight to the next waiting request, or frees it. */
+function releaseSlot(queue) {
+  const next = queue.waiting.shift();
+  if (next) next.resolve(true);
+  else queue.active--;
+}
 
 // ---- API routes -----------------------------------------------------------------------------
 const routes = [
@@ -158,6 +261,129 @@ const routes = [
     res.end(data);
     return undefined; // already sent
   }],
+  // ---- user journey: login -> browse -> cart -> checkout -----------------------------------------
+  ['POST', /^\/api\/login$/, async ({ json }) => {
+    const { username, password } = await json();
+    const user = users.find((u) => u.username === username && u.password === password);
+    if (!user) throw new HttpError(401, 'Invalid username or password');
+    if (user.locked) throw new HttpError(423, 'This account is locked');
+    const token = crypto.randomBytes(16).toString('hex');
+    sessions.set(token, { username: user.username, role: user.role, cart: new Map() });
+    return { token, user: { username: user.username, role: user.role } };
+  }],
+
+  ['GET', /^\/api\/me$/, async ({ req }) => {
+    const { username, role } = requireSession(req);
+    return { username, role };
+  }],
+
+  ['GET', /^\/api\/cart$/, async ({ req }) => cartView(requireSession(req))],
+
+  ['POST', /^\/api\/cart\/items$/, async ({ req, json }) => {
+    const session = requireSession(req);
+    const body = await json();
+    const productId = positiveInt(body.productId, 'productId');
+    const qty = positiveInt(body.qty ?? 1, 'qty');
+    const product = products.find((p) => p.id === productId);
+    if (!product) throw new HttpError(404, 'Product not found');
+    if (product.stock === 0) throw new HttpError(409, 'Out of stock');
+    const total = (session.cart.get(productId) ?? 0) + qty;
+    if (total > product.stock) throw new HttpError(409, `Only ${product.stock} in stock`);
+    session.cart.set(productId, total);
+    return new Reply(201, cartView(session));
+  }],
+
+  ['DELETE', /^\/api\/cart\/items\/(\d+)$/, async ({ req, match }) => {
+    const session = requireSession(req);
+    if (!session.cart.delete(Number(match[1]))) throw new HttpError(404, 'Item is not in the cart');
+    return cartView(session);
+  }],
+
+  ['POST', /^\/api\/checkout$/, async ({ req }) => {
+    const session = requireSession(req);
+    const cart = cartView(session);
+    if (cart.items.length === 0) throw new HttpError(400, 'Cart is empty');
+    const order = { id: `ORD-${++orderCounter}`, username: session.username, ...cart };
+    orders.push(order);
+    session.cart.clear();
+    return new Reply(201, order);
+  }],
+
+  ['GET', /^\/api\/orders$/, async ({ req }) => {
+    const { username } = requireSession(req);
+    return { orders: orders.filter((o) => o.username === username) };
+  }],
+
+  // ---- capacity limits ----------------------------------------------------------------------------
+  // Fixed-window rate limit: /api/limited?limit=5&window=10&key=vu-1
+  ['GET', /^\/api\/limited$/, async ({ req, params }) => {
+    const limit = integer(params, 'limit', 5, 1, 1000);
+    const windowSec = integer(params, 'window', 10, 1, 60);
+    const key = params.get('key') ?? bearerToken(req) ?? 'anonymous';
+    if (key.length > 64) throw new HttpError(400, 'key must be at most 64 characters');
+    const bucket = `${key}|${limit}|${windowSec}`;
+    const now = Date.now();
+    if (rateWindows.size > 1000) {
+      for (const [name, w] of rateWindows) if (now - w.start >= 60_000) rateWindows.delete(name);
+    }
+    let window = rateWindows.get(bucket);
+    if (!window || now - window.start >= windowSec * 1000) {
+      window = { start: now, count: 0 };
+      rateWindows.set(bucket, window);
+    }
+    window.count++;
+    const retryAfter = Math.max(1, Math.ceil((window.start + windowSec * 1000 - now) / 1000));
+    const headers = {
+      'X-RateLimit-Limit': String(limit),
+      'X-RateLimit-Remaining': String(Math.max(0, limit - window.count)),
+      'Access-Control-Expose-Headers': 'Retry-After, X-RateLimit-Limit, X-RateLimit-Remaining',
+    };
+    if (window.count > limit) return new Reply(429, { error: 'Too many requests', retryAfterSeconds: retryAfter }, { ...headers, 'Retry-After': String(retryAfter) });
+    return new Reply(200, { ok: true, remaining: limit - window.count }, headers);
+  }],
+
+  // A resource with limited capacity: `workers` requests are served at once, each taking `ms`,
+  // everyone else waits in line. Capacity is workers / ms * 1000 requests per second.
+  // /api/queue?workers=2&ms=200&maxQueue=500&key=default   (each key is a separate resource)
+  ['GET', /^\/api\/queue$/, async ({ res, params }) => {
+    const workers = integer(params, 'workers', 2, 1, 20);
+    const ms = number(params, 'ms', 200, 0, LIMITS.maxDelayMs);
+    const maxQueue = integer(params, 'maxQueue', 500, 0, 10_000);
+    const key = params.get('key') ?? 'default';
+    if (key.length > 64) throw new HttpError(400, 'key must be at most 64 characters');
+    const id = `${key}|${workers}`;
+    if (!queues.has(id)) queues.set(id, { active: 0, waiting: [] });
+    const queue = queues.get(id);
+    if (queue.active >= workers && queue.waiting.length >= maxQueue) {
+      return new Reply(503, { error: 'Queue is full' }, { 'Retry-After': '1' });
+    }
+    const enqueuedAt = Date.now();
+    const slot = acquireSlot(queue, workers);
+    res.on('close', () => {
+      if (!res.writableEnded) slot.cancel();
+    });
+    if (!(await slot.granted)) return undefined; // the client gave up while waiting
+    const waitedMs = Date.now() - enqueuedAt;
+    try {
+      await sleep(ms);
+    } finally {
+      releaseSlot(queue);
+    }
+    return { workers, serviceMs: ms, waitedMs, totalMs: Date.now() - enqueuedAt };
+  }],
+
+  // ---- diagnostics and test support --------------------------------------------------------------
+  ['GET', /^\/api\/_state$/, async () => ({
+    sessions: sessions.size,
+    orders: orders.length,
+    rateBuckets: rateWindows.size,
+    queues: Object.fromEntries([...queues].map(([id, q]) => [id, { active: q.active, waiting: q.waiting.length }])),
+  })],
+
+  ['POST', /^\/api\/_reset$/, async () => {
+    resetState();
+    return { reset: true };
+  }],
 ];
 
 async function handleApi(req, res, url) {
@@ -168,7 +394,7 @@ async function handleApi(req, res, url) {
     if (!match) continue;
     pathMatched = true;
     if (method !== req.method) continue;
-    const result = await handler({ req, res, params, match });
+    const result = await handler({ req, res, params, match, json: () => readJSON(req) });
     if (result instanceof Reply) sendReply(res, result);
     else if (result !== undefined) sendJSON(res, 200, result, { 'Access-Control-Allow-Origin': '*' });
     return;
@@ -200,7 +426,7 @@ function createServer() {
     const url = new URL(req.url, `http://${HOST}`);
     try {
       if (req.method === 'OPTIONS') {
-        res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': '*' });
+        res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Allow-Headers': '*' });
         res.end();
       } else if (url.pathname.startsWith('/api/')) {
         await handleApi(req, res, url);
