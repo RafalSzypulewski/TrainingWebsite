@@ -147,7 +147,7 @@ The footer **Reset data** button clears local/session storage and cookies, then 
 | Page | Status | Exercises |
 | --- | --- | --- |
 | `index.html` | done | Locate cards, follow links |
-| `pages/login.html` | done | Valid/invalid login, empty validation, locked user, remember me (storage), spinner via `?delay`, error via `?fail`, protected-page redirect |
+| `pages/login.html` | done | Valid/invalid login, required-field validation (on submit and when a field is left empty), locked user, remember me (storage), spinner via `?delay`, error via `?fail`, protected-page redirect |
 | `pages/dashboard.html` | done | Protected page, role-based panel, logout |
 | `pages/forms.html` | done | All input types, validation messages, range/counter, single + multiple file upload, native HTML5 validation |
 | `pages/dynamic.html` | done | Loading spinners, delayed/disappearing elements, delayed enable, progress bar, infinite scroll |

@@ -22,13 +22,13 @@
           <form id="login-form" novalidate>
             <div class="field">
               <label for="username">Username</label>
-              <input type="text" id="username" name="username" data-testid="login-username" autocomplete="username">
+              <input type="text" id="username" name="username" data-testid="login-username" autocomplete="username" aria-describedby="username-error">
               <p class="error" id="username-error" hidden></p>
             </div>
             <div class="field">
               <label for="password">Password</label>
               <div class="password-row">
-                <input type="password" id="password" name="password" data-testid="login-password" autocomplete="current-password">
+                <input type="password" id="password" name="password" data-testid="login-password" autocomplete="current-password" aria-describedby="password-error">
                 <button type="button" class="btn secondary small" id="toggle-password" aria-pressed="false">Show</button>
               </div>
               <p class="error" id="password-error" hidden></p>
@@ -56,6 +56,8 @@
         <ol>
           <li>Log in as <code>student</code> and assert you land on the dashboard.</li>
           <li>Submit an empty form and assert both validation messages.</li>
+          <li>Without submitting: focus Username, press Tab, and assert its message appears (and Password's does not yet).</li>
+          <li>Start typing in a flagged field and assert the message disappears while the field is still focused.</li>
           <li>Assert the error for a wrong password and for the locked account.</li>
           <li>Open the dashboard while logged out; after logging in you should return to it.</li>
           <li>Tick "Remember me" and assert where the session is stored (local vs session storage).</li>
