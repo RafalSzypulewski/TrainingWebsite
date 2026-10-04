@@ -25,15 +25,30 @@
     e.currentTarget.setAttribute('aria-pressed', String(reveal));
   });
 
+  // Required-field rules; each returns an error message, or '' when the field is fine.
+  const rules = {
+    username: (value) => (value.trim() ? '' : 'Username is required'),
+    password: (value) => (value ? '' : 'Password is required'),
+  };
+  const validate = (name) => PW.fieldError(name, rules[name]($(name).value));
+
+  for (const name of Object.keys(rules)) {
+    // Leaving a required field empty shows its message straight away (not only on submit).
+    $(name).addEventListener('blur', () => validate(name));
+    // While a message is showing, re-check as the user types so it disappears as soon as the field is fixed.
+    $(name).addEventListener('input', () => {
+      if (!$(`${name}-error`).hidden) validate(name);
+    });
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const errors = Object.keys(rules).map(validate).filter(Boolean);
+    PW.show($('login-error'), '');
+    if (errors.length) return;
+
     const username = $('username').value.trim();
     const password = $('password').value;
-
-    PW.fieldError('username', username ? '' : 'Username is required');
-    PW.fieldError('password', password ? '' : 'Password is required');
-    PW.show($('login-error'), '');
-    if (!username || !password) return;
 
     PW.setBusy(true, submit, spinner);
     try {

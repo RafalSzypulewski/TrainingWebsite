@@ -1,7 +1,7 @@
 {
   "name": "pw-practice-lab",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Static practice site for Playwright test automation",
   "scripts": {
     "start": "serve . -l 4173",

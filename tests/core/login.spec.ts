@@ -152,3 +152,110 @@ test.describe('Query-param toggles', () => {
     await expect(page).toHaveURL(/dashboard\.html/);
   });
 });
+
+test.describe('Login: required fields are checked when the user leaves them', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('pages/login.html');
+  });
+
+  test('leaving the username empty shows its message, and only its message', async ({ page }) => {
+    await page.getByLabel('Username').focus();
+    await page.keyboard.press('Tab'); // leave the empty field
+
+    await expect(page.getByText('Username is required')).toBeVisible();
+    await expect(page.getByLabel('Username')).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByText('Password is required')).toBeHidden(); // never visited, so no complaint yet
+  });
+
+  test('leaving the password empty shows its message', async ({ page }) => {
+    await page.getByLabel('Password').focus();
+    await page.getByRole('heading', { name: 'Login', level: 1 }).click(); // click elsewhere
+
+    await expect(page.getByText('Password is required')).toBeVisible();
+    await expect(page.getByLabel('Password')).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByText('Username is required')).toBeHidden();
+  });
+
+  test('tabbing through both empty fields shows both messages', async ({ page }) => {
+    await page.getByLabel('Username').focus();
+    await page.keyboard.press('Tab'); // to the password field
+    await page.keyboard.press('Tab'); // out of it (to the Show button)
+
+    await expect(page.getByText('Username is required')).toBeVisible();
+    await expect(page.getByText('Password is required')).toBeVisible();
+  });
+
+  test('a field with text in it is not flagged when left', async ({ page }) => {
+    await page.getByLabel('Username').fill('student');
+    await page.getByLabel('Password').fill('x');
+    await page.getByRole('heading', { name: 'Login', level: 1 }).click();
+
+    await expect(page.getByText('Username is required')).toBeHidden();
+    await expect(page.getByText('Password is required')).toBeHidden();
+    await expect(page.getByLabel('Username')).toHaveAttribute('aria-invalid', 'false');
+  });
+
+  test('a username with only spaces counts as empty', async ({ page }) => {
+    await page.getByLabel('Username').fill('   ');
+    await page.keyboard.press('Tab');
+    await expect(page.getByText('Username is required')).toBeVisible();
+  });
+
+  test('the message disappears as soon as the user starts typing', async ({ page }) => {
+    const username = page.getByLabel('Username');
+    await username.focus();
+    await page.keyboard.press('Tab');
+    await expect(page.getByText('Username is required')).toBeVisible();
+
+    await username.focus();
+    await page.keyboard.type('s'); // still inside the field
+    await expect(page.getByText('Username is required')).toBeHidden();
+    await expect(username).toHaveAttribute('aria-invalid', 'false');
+  });
+
+  test('clearing a filled field and leaving it brings the message back', async ({ page }) => {
+    const password = page.getByLabel('Password');
+    await password.fill('secret');
+    await password.fill('');
+    await expect(page.getByText('Password is required')).toBeHidden(); // not flagged while still typing
+    await page.keyboard.press('Tab');
+    await expect(page.getByText('Password is required')).toBeVisible();
+  });
+
+  test('the message is announced as the description of its field', async ({ page }) => {
+    await page.getByLabel('Username').focus();
+    await page.keyboard.press('Tab');
+    await expect(page.getByLabel('Username')).toHaveAccessibleDescription('Username is required');
+
+    await page.getByLabel('Password').focus();
+    await page.keyboard.press('Tab');
+    await expect(page.getByLabel('Password')).toHaveAccessibleDescription('Password is required');
+  });
+
+  test('using the Show button on an untouched password does not raise a message', async ({ page }) => {
+    await page.getByRole('button', { name: 'Show' }).click();
+    await expect(page.getByText('Password is required')).toBeHidden();
+  });
+
+  test('submitting still checks fields that were never visited', async ({ page }) => {
+    await page.getByTestId('login-submit').click();
+    await expect(page.getByText('Username is required')).toBeVisible();
+    await expect(page.getByText('Password is required')).toBeVisible();
+    await expect(page).toHaveURL(/login\.html/);
+  });
+
+  test('after fixing the flagged fields the user can log in', async ({ page }) => {
+    await page.getByLabel('Username').focus();
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Tab');
+    await expect(page.getByText('Username is required')).toBeVisible();
+
+    await page.getByLabel('Username').fill(USERS.student.username);
+    await page.getByLabel('Password').fill(USERS.student.password);
+    await expect(page.getByText('Username is required')).toBeHidden();
+    await expect(page.getByText('Password is required')).toBeHidden();
+
+    await page.getByTestId('login-submit').click();
+    await expect(page).toHaveURL(/dashboard\.html/);
+  });
+});
